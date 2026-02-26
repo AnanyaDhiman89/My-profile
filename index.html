@@ -106,68 +106,154 @@
         </div>
     </section>
 
-    <script>
-        /* Typing Effect */
-        const text = "Welcome to My World";
-        const typingElement = document.getElementById("typing-text");
-        let index = 0;
+<script>
+/* Typing Effect */
+const text = "Welcome to My World";
+const typingElement = document.getElementById("typing-text");
+let index = 0;
 
-        function typeLetter() {
-            if (index < text.length) {
-                typingElement.innerHTML += text.charAt(index);
-                index++;
-                setTimeout(typeLetter, 80);
-            } else {
-                typingElement.style.textShadow = "0 0 25px rgba(255,255,255,0.9)";
-                setTimeout(() => {
-                    typingElement.style.textShadow = "0 0 10px rgba(255,255,255,0.6)";
-                }, 800);
-            }
+function typeLetter() {
+    if (index < text.length) {
+        typingElement.innerHTML += text.charAt(index);
+        index++;
+        setTimeout(typeLetter, 80);
+    } else {
+        typingElement.style.textShadow = "0 0 25px rgba(255,255,255,0.9)";
+        setTimeout(() => {
+            typingElement.style.textShadow = "0 0 10px rgba(255,255,255,0.6)";
+        }, 800);
+    }
+}
+window.onload = typeLetter;
+
+/* Resize canvases */
+const canvases = document.querySelectorAll("canvas");
+canvases.forEach(c => {
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+});
+
+/* Sparkle Particles */
+const pCanvas = document.getElementById("particles");
+const pCtx = pCanvas.getContext("2d");
+let sparkles = [];
+
+for (let i = 0; i < 40; i++) {
+    sparkles.push({
+        x: Math.random() * pCanvas.width,
+        y: Math.random() * pCanvas.height,
+        radius: Math.random() * 2,
+        speed: Math.random() * 0.5
+    });
+}
+
+function animateSparkles() {
+    pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
+    pCtx.fillStyle = "rgba(255,255,255,0.5)";
+    sparkles.forEach(s => {
+        pCtx.beginPath();
+        pCtx.arc(s.x,s.y,s.radius,0,Math.PI*2);
+        pCtx.fill();
+        s.y -= s.speed;
+        if (s.y < 0) s.y = pCanvas.height;
+    });
+    requestAnimationFrame(animateSparkles);
+}
+animateSparkles();
+
+/* Falling Rose Petals */
+const petalCanvas = document.getElementById("petals");
+const petalCtx = petalCanvas.getContext("2d");
+let petals = [];
+
+for (let i = 0; i < 20; i++) {
+    petals.push({
+        x: Math.random() * petalCanvas.width,
+        y: Math.random() * petalCanvas.height,
+        size: 15 + Math.random() * 15,
+        speedY: 1 + Math.random() * 1.5,
+        speedX: Math.random() * 1 - 0.5,
+        color: Math.random() > 0.5 ? "#FF69B4" : "#FFB6C1"
+    });
+}
+
+function drawPetal(x,y,size,color){
+    petalCtx.fillStyle = color;
+    petalCtx.beginPath();
+    petalCtx.ellipse(x,y,size*0.6,size,Math.PI/4,0,Math.PI*2);
+    petalCtx.fill();
+}
+
+function animatePetals(){
+    petalCtx.clearRect(0,0,petalCanvas.width,petalCanvas.height);
+    petals.forEach(p=>{
+        drawPetal(p.x,p.y,p.size,p.color);
+        p.y += p.speedY;
+        p.x += p.speedX;
+        if(p.y > petalCanvas.height){
+            p.y = -20;
+            p.x = Math.random()*petalCanvas.width;
         }
+    });
+    requestAnimationFrame(animatePetals);
+}
+animatePetals();
 
-        window.onload = typeLetter;
+/* Golden Mouse Sparkle Effect */
+const mouseCanvas = document.getElementById("mouseCanvas");
+const mouseCtx = mouseCanvas.getContext("2d");
+let mouseParticles = [];
 
-        /* Mouse Glow */
-        const glow = document.querySelector(".glow");
-
-        document.addEventListener("mousemove", e => {
-            glow.style.left = e.pageX + "px";
-            glow.style.top = e.pageY + "px";
+document.addEventListener("mousemove", e => {
+    for(let i=0;i<3;i++){
+        mouseParticles.push({
+            x:e.pageX,
+            y:e.pageY,
+            radius:2+Math.random()*3,
+            alpha:1,
+            speedX:(Math.random()-0.5)*2,
+            speedY:(Math.random()-0.5)*2
         });
+    }
+});
 
-        /* Particle Effect */
-        const canvas = document.getElementById("particles");
-        const ctx = canvas.getContext("2d");
+document.addEventListener("click", e=>{
+    for(let i=0;i<20;i++){
+        mouseParticles.push({
+            x:e.pageX,
+            y:e.pageY,
+            radius:3+Math.random()*4,
+            alpha:1,
+            speedX:(Math.random()-0.5)*5,
+            speedY:(Math.random()-0.5)*5
+        });
+    }
+});
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+function animateMouse(){
+    mouseCtx.clearRect(0,0,mouseCanvas.width,mouseCanvas.height);
 
-        let particles = [];
+    for (let i = mouseParticles.length - 1; i >= 0; i--) {
+        let p = mouseParticles[i];
 
-        for (let i = 0; i < 50; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                radius: Math.random() * 2,
-                speed: Math.random() * 0.5
-            });
+        mouseCtx.fillStyle = "rgba(255,215,0," + p.alpha + ")";
+        mouseCtx.beginPath();
+        mouseCtx.arc(p.x,p.y,p.radius,0,Math.PI*2);
+        mouseCtx.fill();
+
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.alpha -= 0.02;
+
+        if(p.alpha <= 0){
+            mouseParticles.splice(i,1);
         }
+    }
 
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(255,255,255,0.5)";
-            particles.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fill();
-                p.y -= p.speed;
-                if (p.y < 0) p.y = canvas.height;
-            });
-            requestAnimationFrame(animateParticles);
-        }
-
-        animateParticles();
-    </script>
+    requestAnimationFrame(animateMouse);
+}
+animateMouse();
+</script>
 
 </body>
 </html>
