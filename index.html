@@ -1,86 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Profile</title>
+<title>My Profile</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            overflow-x: hidden;
-        }
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    overflow-x:hidden;
+}
 
-        .hero {
-            position: relative;
-            height: 100vh;
-            background-image: url("Screenshot_2026-02-26-14-47-00-466.jpeg");
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: #E0FFFF;
-            overflow: hidden;
-            box-shadow: inset 0 0 120px rgba(0,0,0,0.4);
-        }
+.hero{
+    position:relative;
+    height:100vh;
+    background-image:url("Screenshot_2026-02-26-14-47-00-466.jpeg");
+    background-size:cover;
+    background-position:center 0px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    color:#E0FFFF;
+    overflow:hidden;
+    box-shadow: inset 0 0 120px rgba(0,0,0,0.4);
+}
 
-        /* Blue fade */
-        .hero::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(
-                to bottom,
-                rgba(0, 0, 0, 0) 0%,
-                #5F9EA0 100%
-            );
-            z-index: 4;
-        }
+.hero::after{
+    content:"";
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:200px;
+    background:linear-gradient(
+        to bottom,
+        rgba(0,0,0,0) 0%,
+        #5F9EA0 100%
+    );
+    z-index:4;
+}
 
-        /* Text */
-        #typing-text {
-            position: relative;
-            z-index: 7;
-            font-size: 48px;
-            opacity: 0;
-            background: rgba(0,0,0,0.4);
-            padding: 15px 30px;
-            border-radius: 10px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.6);
-            animation: fadeIn 1.5s forwards;
-        }
+#typing-text{
+    position:relative;
+    z-index:7;
+    font-size:48px;
+    opacity:0;
+    background:rgba(0,0,0,0.4);
+    padding:15px 30px;
+    border-radius:10px;
+    text-shadow:0 0 10px rgba(255,255,255,0.6);
+    animation:fadeIn 1.5s forwards;
+}
 
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
+@keyframes fadeIn{
+    to{opacity:1;}
+}
 
-        canvas {
-            position: absolute;
-            inset: 0;
-        }
+canvas{
+    position:absolute;
+    inset:0;
+}
 
-        #particles { z-index: 1; }
-        #petals { z-index: 3; }
-        #mouseCanvas { 
-            z-index: 6; 
-            pointer-events: none; 
-        }
+#particles{z-index:1;}
+#petals{z-index:3;}
+#mouseCanvas{z-index:6; pointer-events:none;}
 
-        .profile {
-            background-color: #5F9EA0;
-            padding: 100px 0;
-            text-align: center;
-        }
+.profile{
+    background-color:#5F9EA0;
+    padding:100px 0;
+    text-align:center;
+}
 
-        .profile img {
-            width: 300px;
-            border-radius: 15px;
-        }
-    </style>
+.profile img{
+    width:300px;
+    border-radius:15px;
+}
+</style>
 </head>
 
 <body>
@@ -98,128 +93,158 @@
 
 <script>
 
-/* -------- Safe Canvas Resize -------- */
-function resizeCanvas() {
-    document.querySelectorAll("canvas").forEach(c => {
-        c.width = window.innerWidth;
-        c.height = window.innerHeight;
+/* ---------- Resize Canvas ---------- */
+function resizeCanvas(){
+    document.querySelectorAll("canvas").forEach(c=>{
+        c.width=window.innerWidth;
+        c.height=window.innerHeight;
     });
 }
-window.addEventListener("resize", resizeCanvas);
+window.addEventListener("resize",resizeCanvas);
 resizeCanvas();
 
-/* -------- Typing Effect -------- */
-const text = "Welcome to My World";
-const typingElement = document.getElementById("typing-text");
-let index = 0;
+/* ---------- Dramatic Parallax ---------- */
+window.addEventListener("scroll",()=>{
+    const scrollY=window.scrollY;
+    const hero=document.querySelector(".hero");
+    hero.style.backgroundPosition=`center ${scrollY * 0.5}px`;
+});
 
-function typeLetter() {
-    if (index < text.length) {
-        typingElement.innerHTML += text.charAt(index);
+/* ---------- Typing ---------- */
+const text="Welcome to My World";
+const typingElement=document.getElementById("typing-text");
+let index=0;
+
+function typeLetter(){
+    if(index<text.length){
+        typingElement.innerHTML+=text.charAt(index);
         index++;
-        setTimeout(typeLetter, 80);
-    } else {
-        typingElement.style.textShadow = "0 0 25px rgba(255,255,255,0.9)";
-        setTimeout(() => {
-            typingElement.style.textShadow = "0 0 10px rgba(255,255,255,0.6)";
-        }, 800);
+        setTimeout(typeLetter,80);
+    }else{
+        typingElement.style.textShadow="0 0 25px rgba(255,255,255,0.9)";
+        setTimeout(()=>{
+            typingElement.style.textShadow="0 0 10px rgba(255,255,255,0.6)";
+        },800);
     }
 }
-window.onload = typeLetter;
+window.onload=typeLetter;
 
-/* -------- Floating White Sparkles -------- */
-const pCanvas = document.getElementById("particles");
-const pCtx = pCanvas.getContext("2d");
-let sparkles = [];
+/* ---------- Floating Sparkles ---------- */
+const pCanvas=document.getElementById("particles");
+const pCtx=pCanvas.getContext("2d");
+let sparkles=[];
 
-for (let i = 0; i < 40; i++) {
+for(let i=0;i<40;i++){
     sparkles.push({
-        x: Math.random() * pCanvas.width,
-        y: Math.random() * pCanvas.height,
-        radius: Math.random() * 2,
-        speed: Math.random() * 0.5
+        x:Math.random()*pCanvas.width,
+        y:Math.random()*pCanvas.height,
+        radius:Math.random()*2,
+        speed:Math.random()*0.5
     });
 }
 
-function animateSparkles() {
+function animateSparkles(){
     pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
-    pCtx.fillStyle = "rgba(255,255,255,0.5)";
-    sparkles.forEach(s => {
+    pCtx.fillStyle="rgba(255,255,255,0.5)";
+    sparkles.forEach(s=>{
         pCtx.beginPath();
         pCtx.arc(s.x,s.y,s.radius,0,Math.PI*2);
         pCtx.fill();
-        s.y -= s.speed;
-        if (s.y < 0) s.y = pCanvas.height;
+        s.y-=s.speed;
+        if(s.y<0) s.y=pCanvas.height;
     });
     requestAnimationFrame(animateSparkles);
 }
 animateSparkles();
 
-/* -------- Rose Petals -------- */
-const petalCanvas = document.getElementById("petals");
-const petalCtx = petalCanvas.getContext("2d");
-let petals = [];
+/* ---------- Magical Fairy Petals ---------- */
+const petalCanvas=document.getElementById("petals");
+const petalCtx=petalCanvas.getContext("2d");
+let petals=[];
 
-for (let i = 0; i < 20; i++) {
+for(let i=0;i<25;i++){
     petals.push({
-        x: Math.random() * petalCanvas.width,
-        y: Math.random() * petalCanvas.height,
-        size: 18 + Math.random() * 12,
-        speedY: 1 + Math.random() * 1.5,
-        speedX: Math.random() * 1 - 0.5,
-        color: Math.random() > 0.5 ? "#FF69B4" : "#FFB6C1"
+        x:Math.random()*petalCanvas.width,
+        y:Math.random()*petalCanvas.height,
+        size:20+Math.random()*15,
+        speedY:0.8+Math.random()*1.2,
+        sway:Math.random()*2,
+        angle:Math.random()*Math.PI*2,
+        rotation:Math.random()*Math.PI,
+        rotationSpeed:(Math.random()-0.5)*0.02,
+        color:Math.random()>0.5?"#FF69B4":"#FFB6C1",
+        glow:Math.random()*10
     });
 }
 
-function drawPetal(x,y,size,color){
-    petalCtx.fillStyle = color;
+function drawPetal(p){
+    petalCtx.save();
+    petalCtx.translate(p.x,p.y);
+    petalCtx.rotate(p.rotation);
+
+    let gradient=petalCtx.createRadialGradient(0,0,2,0,0,p.size);
+    gradient.addColorStop(0,"white");
+    gradient.addColorStop(1,p.color);
+
+    petalCtx.fillStyle=gradient;
+    petalCtx.shadowColor=p.color;
+    petalCtx.shadowBlur=p.glow;
+
     petalCtx.beginPath();
-    petalCtx.ellipse(x,y,size*0.6,size,Math.PI/4,0,Math.PI*2);
+    petalCtx.ellipse(0,0,p.size*0.6,p.size,0,0,Math.PI*2);
     petalCtx.fill();
+
+    petalCtx.restore();
 }
 
 function animatePetals(){
     petalCtx.clearRect(0,0,petalCanvas.width,petalCanvas.height);
+
     petals.forEach(p=>{
-        drawPetal(p.x,p.y,p.size,p.color);
-        p.y += p.speedY;
-        p.x += p.speedX;
-        if(p.y > petalCanvas.height){
-            p.y = -20;
-            p.x = Math.random()*petalCanvas.width;
+        p.y+=p.speedY;
+        p.angle+=0.02;
+        p.x+=Math.sin(p.angle)*p.sway;
+        p.rotation+=p.rotationSpeed;
+
+        if(p.y>petalCanvas.height){
+            p.y=-20;
+            p.x=Math.random()*petalCanvas.width;
         }
+
+        drawPetal(p);
     });
+
     requestAnimationFrame(animatePetals);
 }
 animatePetals();
 
-/* -------- Golden Mouse Sparkles -------- */
-const mouseCanvas = document.getElementById("mouseCanvas");
-const mouseCtx = mouseCanvas.getContext("2d");
-let mouseParticles = [];
+/* ---------- Golden Mouse Magic ---------- */
+const mouseCanvas=document.getElementById("mouseCanvas");
+const mouseCtx=mouseCanvas.getContext("2d");
+let mouseParticles=[];
 
-document.addEventListener("mousemove", e => {
-    for(let i=0;i<4;i++){
+document.addEventListener("mousemove",e=>{
+    for(let i=0;i<5;i++){
         mouseParticles.push({
             x:e.pageX,
             y:e.pageY,
             radius:2+Math.random()*3,
             alpha:1,
-            speedX:(Math.random()-0.5)*2,
-            speedY:(Math.random()-0.5)*2
+            speedX:(Math.random()-0.5)*3,
+            speedY:(Math.random()-0.5)*3
         });
     }
 });
 
-document.addEventListener("click", e=>{
-    for(let i=0;i<25;i++){
+document.addEventListener("click",e=>{
+    for(let i=0;i<30;i++){
         mouseParticles.push({
             x:e.pageX,
             y:e.pageY,
-            radius:3+Math.random()*4,
+            radius:3+Math.random()*5,
             alpha:1,
-            speedX:(Math.random()-0.5)*6,
-            speedY:(Math.random()-0.5)*6
+            speedX:(Math.random()-0.5)*7,
+            speedY:(Math.random()-0.5)*7
         });
     }
 });
@@ -227,19 +252,19 @@ document.addEventListener("click", e=>{
 function animateMouse(){
     mouseCtx.clearRect(0,0,mouseCanvas.width,mouseCanvas.height);
 
-    for (let i = mouseParticles.length - 1; i >= 0; i--) {
-        let p = mouseParticles[i];
+    for(let i=mouseParticles.length-1;i>=0;i--){
+        let p=mouseParticles[i];
 
-        mouseCtx.fillStyle = "rgba(255,215,0," + p.alpha + ")";
+        mouseCtx.fillStyle="rgba(255,215,0,"+p.alpha+")";
         mouseCtx.beginPath();
         mouseCtx.arc(p.x,p.y,p.radius,0,Math.PI*2);
         mouseCtx.fill();
 
-        p.x += p.speedX;
-        p.y += p.speedY;
-        p.alpha -= 0.03;
+        p.x+=p.speedX;
+        p.y+=p.speedY;
+        p.alpha-=0.03;
 
-        if(p.alpha <= 0){
+        if(p.alpha<=0){
             mouseParticles.splice(i,1);
         }
     }
@@ -251,4 +276,4 @@ animateMouse();
 </script>
 
 </body>
-    </html>
+</html>
