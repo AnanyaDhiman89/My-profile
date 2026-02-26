@@ -5,68 +5,98 @@
 
     <style>
         body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-}
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
 
-/* Hero Section (Full Screen Background Image) */
-.hero {
-    position: relative;
-    height: 100vh;
-    background-image: url("Screenshot_2026-02-26-14-47-00-466.jpeg");
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #E0FFFF;
-    text-align: center;
-    overflow: hidden;
-    box-shadow: inset 0 0 100px rgba(0,0,0,0.4);
-}
-.hero::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 200px;
-    background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0) 0%,
-        #5F9EA0 100%
-    );
-    z-index: 1;
-}
-.hero h1 {
-    position: relative;
-    z-index: 2;
-    font-size: 48px;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 15px 30px;
-    border-radius: 10px;
-    }
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 100vh;
+            background-image: url("Screenshot_2026-02-26-14-47-00-466.jpeg");
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #E0FFFF;
+            text-align: center;
+            overflow: hidden;
+            box-shadow: inset 0 0 120px rgba(0,0,0,0.4);
+        }
 
-/* Second Section */
-.profile {
-    background-color: #5F9EA0;
-    padding: 100px 0;
-    text-align: center;
-}
+        /* Bottom Fade */
+        .hero::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0) 0%,
+                #5F9EA0 100%
+            );
+            z-index: 2;
+        }
 
-.profile img {
-    width: 300px;
-    border-radius: 15px;
-}
+        /* Typing Text */
+        #typing-text {
+            position: relative;
+            z-index: 4;
+            font-size: 48px;
+            opacity: 0;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.6);
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Interactive Glow */
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.25), transparent 70%);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+
+        /* Particles Canvas */
+        #particles {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        /* Second Section */
+        .profile {
+            background-color: #5F9EA0;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .profile img {
+            width: 300px;
+            border-radius: 15px;
+        }
     </style>
-
 </head>
 
 <body>
 
     <!-- Hero Section -->
     <section class="hero">
-        <h1>Welcome to My World</h1>
+        <canvas id="particles"></canvas>
+        <div class="glow"></div>
+        <h1 id="typing-text"></h1>
     </section>
 
     <!-- Profile Section -->
@@ -75,6 +105,69 @@
             <img src="Screenshot_2026-02-25-18-16-23-301.jpeg" alt="My Profile Image">
         </div>
     </section>
+
+    <script>
+        /* Typing Effect */
+        const text = "Welcome to My World";
+        const typingElement = document.getElementById("typing-text");
+        let index = 0;
+
+        function typeLetter() {
+            if (index < text.length) {
+                typingElement.innerHTML += text.charAt(index);
+                index++;
+                setTimeout(typeLetter, 80);
+            } else {
+                typingElement.style.textShadow = "0 0 25px rgba(255,255,255,0.9)";
+                setTimeout(() => {
+                    typingElement.style.textShadow = "0 0 10px rgba(255,255,255,0.6)";
+                }, 800);
+            }
+        }
+
+        window.onload = typeLetter;
+
+        /* Mouse Glow */
+        const glow = document.querySelector(".glow");
+
+        document.addEventListener("mousemove", e => {
+            glow.style.left = e.pageX + "px";
+            glow.style.top = e.pageY + "px";
+        });
+
+        /* Particle Effect */
+        const canvas = document.getElementById("particles");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+
+        for (let i = 0; i < 50; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2,
+                speed: Math.random() * 0.5
+            });
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(255,255,255,0.5)";
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                p.y -= p.speed;
+                if (p.y < 0) p.y = canvas.height;
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+    </script>
 
 </body>
 </html>
