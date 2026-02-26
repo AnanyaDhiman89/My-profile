@@ -7,9 +7,9 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
+            overflow-x: hidden;
         }
 
-        /* Hero Section */
         .hero {
             position: relative;
             height: 100vh;
@@ -19,13 +19,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #E0FFFF;
             text-align: center;
+            color: #E0FFFF;
             overflow: hidden;
             box-shadow: inset 0 0 120px rgba(0,0,0,0.4);
         }
 
-        /* Bottom Fade */
+        /* Blue fade */
         .hero::after {
             content: "";
             position: absolute;
@@ -38,16 +38,16 @@
                 rgba(0, 0, 0, 0) 0%,
                 #5F9EA0 100%
             );
-            z-index: 2;
+            z-index: 4;
         }
 
-        /* Typing Text */
+        /* Text */
         #typing-text {
             position: relative;
-            z-index: 4;
+            z-index: 7;
             font-size: 48px;
             opacity: 0;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0,0,0,0.4);
             padding: 15px 30px;
             border-radius: 10px;
             text-shadow: 0 0 10px rgba(255,255,255,0.6);
@@ -58,25 +58,18 @@
             to { opacity: 1; }
         }
 
-        /* Interactive Glow */
-        .glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255,255,255,0.25), transparent 70%);
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 3;
-        }
-
-        /* Particles Canvas */
-        #particles {
+        canvas {
             position: absolute;
             inset: 0;
-            z-index: 1;
         }
 
-        /* Second Section */
+        #particles { z-index: 1; }
+        #petals { z-index: 3; }
+        #mouseCanvas { 
+            z-index: 6; 
+            pointer-events: none; 
+        }
+
         .profile {
             background-color: #5F9EA0;
             padding: 100px 0;
@@ -92,22 +85,30 @@
 
 <body>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <canvas id="particles"></canvas>
-        <div class="glow"></div>
-        <h1 id="typing-text"></h1>
-    </section>
+<section class="hero">
+    <canvas id="particles"></canvas>
+    <canvas id="petals"></canvas>
+    <canvas id="mouseCanvas"></canvas>
+    <h1 id="typing-text"></h1>
+</section>
 
-    <!-- Profile Section -->
-    <section class="profile">
-        <div class="container">
-            <img src="Screenshot_2026-02-25-18-16-23-301.jpeg" alt="My Profile Image">
-        </div>
-    </section>
+<section class="profile">
+    <img src="Screenshot_2026-02-25-18-16-23-301.jpeg" alt="My Profile Image">
+</section>
 
 <script>
-/* Typing Effect */
+
+/* -------- Safe Canvas Resize -------- */
+function resizeCanvas() {
+    document.querySelectorAll("canvas").forEach(c => {
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+    });
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+/* -------- Typing Effect -------- */
 const text = "Welcome to My World";
 const typingElement = document.getElementById("typing-text");
 let index = 0;
@@ -126,14 +127,7 @@ function typeLetter() {
 }
 window.onload = typeLetter;
 
-/* Resize canvases */
-const canvases = document.querySelectorAll("canvas");
-canvases.forEach(c => {
-    c.width = window.innerWidth;
-    c.height = window.innerHeight;
-});
-
-/* Sparkle Particles */
+/* -------- Floating White Sparkles -------- */
 const pCanvas = document.getElementById("particles");
 const pCtx = pCanvas.getContext("2d");
 let sparkles = [];
@@ -161,7 +155,7 @@ function animateSparkles() {
 }
 animateSparkles();
 
-/* Falling Rose Petals */
+/* -------- Rose Petals -------- */
 const petalCanvas = document.getElementById("petals");
 const petalCtx = petalCanvas.getContext("2d");
 let petals = [];
@@ -170,7 +164,7 @@ for (let i = 0; i < 20; i++) {
     petals.push({
         x: Math.random() * petalCanvas.width,
         y: Math.random() * petalCanvas.height,
-        size: 15 + Math.random() * 15,
+        size: 18 + Math.random() * 12,
         speedY: 1 + Math.random() * 1.5,
         speedX: Math.random() * 1 - 0.5,
         color: Math.random() > 0.5 ? "#FF69B4" : "#FFB6C1"
@@ -199,13 +193,13 @@ function animatePetals(){
 }
 animatePetals();
 
-/* Golden Mouse Sparkle Effect */
+/* -------- Golden Mouse Sparkles -------- */
 const mouseCanvas = document.getElementById("mouseCanvas");
 const mouseCtx = mouseCanvas.getContext("2d");
 let mouseParticles = [];
 
 document.addEventListener("mousemove", e => {
-    for(let i=0;i<3;i++){
+    for(let i=0;i<4;i++){
         mouseParticles.push({
             x:e.pageX,
             y:e.pageY,
@@ -218,14 +212,14 @@ document.addEventListener("mousemove", e => {
 });
 
 document.addEventListener("click", e=>{
-    for(let i=0;i<20;i++){
+    for(let i=0;i<25;i++){
         mouseParticles.push({
             x:e.pageX,
             y:e.pageY,
             radius:3+Math.random()*4,
             alpha:1,
-            speedX:(Math.random()-0.5)*5,
-            speedY:(Math.random()-0.5)*5
+            speedX:(Math.random()-0.5)*6,
+            speedY:(Math.random()-0.5)*6
         });
     }
 });
@@ -243,7 +237,7 @@ function animateMouse(){
 
         p.x += p.speedX;
         p.y += p.speedY;
-        p.alpha -= 0.02;
+        p.alpha -= 0.03;
 
         if(p.alpha <= 0){
             mouseParticles.splice(i,1);
@@ -253,7 +247,8 @@ function animateMouse(){
     requestAnimationFrame(animateMouse);
 }
 animateMouse();
+
 </script>
 
 </body>
-</html>
+    </html>
