@@ -5,37 +5,58 @@
 
     <style>
         body {
-            background-color: #5F9EA0;
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
 
-        img {
-            width: 300px;
-            border-radius: 15px;
-        }
-        .container {
+/* Hero Section (Full Screen Background Image) */
+.hero {
+    height: 100vh;
+    background-image: url("PUT-YOUR-SUNSET-IMAGE-LINK-HERE");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #E0FFFF;
     text-align: center;
 }
 
-h1 {
-    color: #E0FFFF;
-    font-size: 32px;
-    margin-bottom: 20px;
-            }
+.hero h1 {
+    font-size: 48px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 15px 30px;
+    border-radius: 10px;
+}
+
+/* Second Section */
+.profile {
+    background-color: #5F9EA0;
+    padding: 100px 0;
+    text-align: center;
+}
+
+.profile img {
+    width: 300px;
+    border-radius: 15px;
+}
     </style>
 
 </head>
 
 <body>
 
-    <div class="container">
-        <h1>My Profile</h1>
-        <img src="Screenshot_2026-02-25-18-16-23-301.jpeg" alt="My Image">
-    </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to My World</h1>
+    </section>
+
+    <!-- Profile Section -->
+    <section class="profile">
+        <div class="container">
+            <img src="Screenshot_2026-02-25-18-16-23-301.jpeg" alt="My Profile Image">
+        </div>
+    </section>
 
 </body>
 </html>
