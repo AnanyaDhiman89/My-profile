@@ -295,18 +295,6 @@ document.addEventListener("pointerup", () => {
     isPointerDown = false;
 });
 
-/* Continuous sparkle generator while finger is down */
-function generateSparkles() {
-    if (isPointerDown && isInsideHero(lastX, lastY)) {
-        for (let i = 0; i < 4; i++) {
-            mouseParticles.push({
-                x: lastX,
-                y: lastY,
-                radius: 2 + Math.random() * 3,
-                alpha: 1,
-                speedX: (Math.random() - 0.5) * 1.5,
-                speedY: (Math.random() - 0.5) * 1.5
-            });
         }
     }
 }
