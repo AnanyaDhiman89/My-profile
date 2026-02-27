@@ -244,12 +244,6 @@ const mouseCanvas = document.getElementById("mouseCanvas");
 const mouseCtx = mouseCanvas.getContext("2d");
 let mouseParticles = [];
 
-/* Make canvas fixed to screen */
-mouseCanvas.style.position = "fixed";
-mouseCanvas.style.top = "0";
-mouseCanvas.style.left = "0";
-mouseCanvas.style.pointerEvents = "none";
-
 /* Use Pointer Events (mouse + touch) */
 document.addEventListener("pointermove", e => {
     for (let i = 0; i < 5; i++) {
