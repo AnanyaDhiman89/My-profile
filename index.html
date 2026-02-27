@@ -238,13 +238,18 @@ function animatePetals(){
 }
 animatePetals();
 
-/* ---------- Clean Golden Mouse Magic ---------- */
+/* ---------- Hero-Only Golden Mouse Magic ---------- */
 
 const mouseCanvas = document.getElementById("mouseCanvas");
 const mouseCtx = mouseCanvas.getContext("2d");
-let mouseParticles = [];
+const heroSection = document.querySelector(".hero");
 
-/* Make canvas fixed properly */
+let mouseParticles = [];
+let isPointerDown = false;
+let lastX = 0;
+let lastY = 0;
+
+/* Make canvas fixed */
 mouseCanvas.style.position = "fixed";
 mouseCanvas.style.top = "0";
 mouseCanvas.style.left = "0";
@@ -252,7 +257,6 @@ mouseCanvas.style.width = "100%";
 mouseCanvas.style.height = "100%";
 mouseCanvas.style.pointerEvents = "none";
 
-/* Ensure canvas size matches screen */
 function resizeMouseCanvas() {
     mouseCanvas.width = window.innerWidth;
     mouseCanvas.height = window.innerHeight;
@@ -260,35 +264,58 @@ function resizeMouseCanvas() {
 resizeMouseCanvas();
 window.addEventListener("resize", resizeMouseCanvas);
 
-/* Pointer events (works on mouse + touch) */
-document.addEventListener("pointermove", e => {
-    for (let i = 0; i < 4; i++) {
-        mouseParticles.push({
-            x: e.clientX,
-            y: e.clientY,
-            radius: 2 + Math.random() * 3,
-            alpha: 1,
-            speedX: (Math.random() - 0.5) * 1.5,
-            speedY: (Math.random() - 0.5) * 1.5
-        });
-    }
-});
+/* Check if pointer is inside hero section */
+function isInsideHero(x, y) {
+    const rect = heroSection.getBoundingClientRect();
+    return (
+        x >= rect.left &&
+        x <= rect.right &&
+        y >= rect.top &&
+        y <= rect.bottom
+    );
+}
 
+/* Pointer down */
 document.addEventListener("pointerdown", e => {
-    for (let i = 0; i < 25; i++) {
-        mouseParticles.push({
-            x: e.clientX,
-            y: e.clientY,
-            radius: 3 + Math.random() * 4,
-            alpha: 1,
-            speedX: (Math.random() - 0.5) * 4,
-            speedY: (Math.random() - 0.5) * 4
-        });
+    if (isInsideHero(e.clientX, e.clientY)) {
+        isPointerDown = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
     }
 });
 
+/* Pointer move */
+document.addEventListener("pointermove", e => {
+    lastX = e.clientX;
+    lastY = e.clientY;
+});
+
+/* Pointer up */
+document.addEventListener("pointerup", () => {
+    isPointerDown = false;
+});
+
+/* Continuous sparkle generator while finger is down */
+function generateSparkles() {
+    if (isPointerDown && isInsideHero(lastX, lastY)) {
+        for (let i = 0; i < 4; i++) {
+            mouseParticles.push({
+                x: lastX,
+                y: lastY,
+                radius: 2 + Math.random() * 3,
+                alpha: 1,
+                speedX: (Math.random() - 0.5) * 1.5,
+                speedY: (Math.random() - 0.5) * 1.5
+            });
+        }
+    }
+}
+
+/* Animate */
 function animateMouse() {
     mouseCtx.clearRect(0, 0, mouseCanvas.width, mouseCanvas.height);
+
+    generateSparkles();
 
     for (let i = mouseParticles.length - 1; i >= 0; i--) {
         let p = mouseParticles[i];
