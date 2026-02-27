@@ -353,21 +353,21 @@ if (isTouching && isInsideHero(touchX, touchY)) {
         let p = mouseParticles[i];
 
         mouseCtx.save();
-mouseCtx.translate(p.x, p.y);
-mouseCtx.rotate(p.rotation || 0);
+        mouseCtx.translate(p.x, p.y);
+        mouseCtx.rotate(p.rotation || 0);
 
-mouseCtx.globalAlpha = p.alpha;
-mouseCtx.strokeStyle = "rgba(255,215,0,1)";
-mouseCtx.lineWidth = 1.5;
+        mouseCtx.globalAlpha = p.alpha;
+        mouseCtx.strokeStyle = "rgba(255,215,0,1)";
+        mouseCtx.lineWidth = 1.5;
 
-mouseCtx.beginPath();
-mouseCtx.moveTo(0, -p.radius * 3);
-mouseCtx.lineTo(0, p.radius * 3);
-mouseCtx.moveTo(-p.radius * 3, 0);
-mouseCtx.lineTo(p.radius * 3, 0);
-mouseCtx.stroke();
+        mouseCtx.beginPath();
+        mouseCtx.moveTo(0, -p.radius * 3);
+        mouseCtx.lineTo(0, p.radius * 3);
+        mouseCtx.moveTo(-p.radius * 3, 0);
+        mouseCtx.lineTo(p.radius * 3, 0);
+        mouseCtx.stroke();
 
-mouseCtx.restore();
+        mouseCtx.restore();
 
         p.x += p.speedX;
         p.y += p.speedY;
