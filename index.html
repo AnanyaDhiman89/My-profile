@@ -238,59 +238,84 @@ function animatePetals(){
 }
 animatePetals();
 
-/* ---------- Golden Mouse Magic ---------- */
-const mouseCanvas=document.getElementById("mouseCanvas");
-const mouseCtx=mouseCanvas.getContext("2d");
-let mouseParticles=[];
+/* ---------- Enhanced Golden Mouse Magic ---------- */
 
-document.addEventListener("mousemove",e=>{
-    for(let i=0;i<4;i++){
+const mouseCanvas = document.getElementById("mouseCanvas");
+const mouseCtx = mouseCanvas.getContext("2d");
+let mouseParticles = [];
+
+/* Make canvas fixed to screen */
+mouseCanvas.style.position = "fixed";
+mouseCanvas.style.top = "0";
+mouseCanvas.style.left = "0";
+mouseCanvas.style.pointerEvents = "none";
+
+/* Use Pointer Events (mouse + touch) */
+document.addEventListener("pointermove", e => {
+    for (let i = 0; i < 5; i++) {
         mouseParticles.push({
-            x:e.pageX,
-            y:e.pageY,
-            radius:2+Math.random()*3,
-            alpha:1,
-            speedX:(Math.random()-0.5)*2,
-            speedY:(Math.random()-0.5)*2
+            x: e.clientX,
+            y: e.clientY,
+            radius: 2 + Math.random() * 3,
+            alpha: 1,
+            speedX: (Math.random() - 0.5) * 1.5,
+            speedY: (Math.random() - 0.5) * 1.5
         });
     }
 });
 
-document.addEventListener("click",e=>{
-    for(let i=0;i<25;i++){
+document.addEventListener("pointerdown", e => {
+    for (let i = 0; i < 30; i++) {
         mouseParticles.push({
-            x:e.pageX,
-            y:e.pageY,
-            radius:3+Math.random()*4,
-            alpha:1,
-            speedX:(Math.random()-0.5)*5,
-            speedY:(Math.random()-0.5)*5
+            x: e.clientX,
+            y: e.clientY,
+            radius: 3 + Math.random() * 5,
+            alpha: 1,
+            speedX: (Math.random() - 0.5) * 4,
+            speedY: (Math.random() - 0.5) * 4
         });
     }
 });
 
-function animateMouse(){
-    mouseCtx.clearRect(0,0,mouseCanvas.width,mouseCanvas.height);
+function animateMouse() {
 
-    for(let i=mouseParticles.length-1;i>=0;i--){
-        let p=mouseParticles[i];
+    /* Soft ghost trail instead of full clear */
+    mouseCtx.fillStyle = "rgba(0,0,0,0.15)";
+    mouseCtx.fillRect(0, 0, mouseCanvas.width, mouseCanvas.height);
 
-        mouseCtx.fillStyle="rgba(255,215,0,"+p.alpha+")";
+    for (let i = mouseParticles.length - 1; i >= 0; i--) {
+
+        let p = mouseParticles[i];
+
+        /* Golden glow */
         mouseCtx.beginPath();
-        mouseCtx.arc(p.x,p.y,p.radius,0,Math.PI*2);
+        mouseCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+
+        let gradient = mouseCtx.createRadialGradient(
+            p.x, p.y, 0,
+            p.x, p.y, p.radius * 4
+        );
+
+        gradient.addColorStop(0, "rgba(255,255,200," + p.alpha + ")");
+        gradient.addColorStop(0.4, "rgba(255,215,0," + p.alpha + ")");
+        gradient.addColorStop(1, "rgba(255,215,0,0)");
+
+        mouseCtx.fillStyle = gradient;
         mouseCtx.fill();
 
-        p.x+=p.speedX;
-        p.y+=p.speedY;
-        p.alpha-=0.03;
+        /* Movement */
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.alpha -= 0.025;
 
-        if(p.alpha<=0){
-            mouseParticles.splice(i,1);
+        if (p.alpha <= 0) {
+            mouseParticles.splice(i, 1);
         }
     }
 
     requestAnimationFrame(animateMouse);
 }
+
 animateMouse();
 
 </script>
