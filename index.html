@@ -238,18 +238,18 @@ function animatePetals(){
 }
 animatePetals();
 
-/* ---------- Hero-Only Golden Mouse Magic ---------- */
+/* ---------- Stable Hero-Only Golden Mouse Magic ---------- */
 
 const mouseCanvas = document.getElementById("mouseCanvas");
 const mouseCtx = mouseCanvas.getContext("2d");
 const heroSection = document.querySelector(".hero");
 
-let mouseParticles = [];
-let isPointerDown = false;
-let lastX = 0;
-let lastY = 0;
+let particles = [];
+let isTouching = false;
+let pointerX = 0;
+let pointerY = 0;
 
-/* Make canvas fixed */
+/* Fix canvas to screen */
 mouseCanvas.style.position = "fixed";
 mouseCanvas.style.top = "0";
 mouseCanvas.style.left = "0";
@@ -257,15 +257,15 @@ mouseCanvas.style.width = "100%";
 mouseCanvas.style.height = "100%";
 mouseCanvas.style.pointerEvents = "none";
 
-function resizeMouseCanvas() {
+function resizeCanvas() {
     mouseCanvas.width = window.innerWidth;
     mouseCanvas.height = window.innerHeight;
 }
-resizeMouseCanvas();
-window.addEventListener("resize", resizeMouseCanvas);
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
-/* Check if pointer is inside hero section */
-function isInsideHero(x, y) {
+/* Check if inside hero */
+function insideHero(x, y) {
     const rect = heroSection.getBoundingClientRect();
     return (
         x >= rect.left &&
@@ -275,59 +275,73 @@ function isInsideHero(x, y) {
     );
 }
 
-/* Pointer down */
+/* Pointer events (works for mouse + touch) */
 document.addEventListener("pointerdown", e => {
-    if (isInsideHero(e.clientX, e.clientY)) {
-        isPointerDown = true;
-        lastX = e.clientX;
-        lastY = e.clientY;
+    if (insideHero(e.clientX, e.clientY)) {
+        isTouching = true;
+        pointerX = e.clientX;
+        pointerY = e.clientY;
     }
 });
 
-/* Pointer move */
 document.addEventListener("pointermove", e => {
-    lastX = e.clientX;
-    lastY = e.clientY;
+    pointerX = e.clientX;
+    pointerY = e.clientY;
 });
 
-/* Pointer up */
 document.addEventListener("pointerup", () => {
-    isPointerDown = false;
+    isTouching = false;
 });
 
-        }
+/* Stop effect if hero scrolls away */
+window.addEventListener("scroll", () => {
+    const rect = heroSection.getBoundingClientRect();
+    if (rect.bottom <= 0) {
+        isTouching = false;
     }
-}
+});
 
-/* Animate */
+/* Animation loop */
 function animateMouse() {
     mouseCtx.clearRect(0, 0, mouseCanvas.width, mouseCanvas.height);
 
-    generateSparkles();
+    /* Generate sparkles only while touching AND inside hero */
+    if (isTouching && insideHero(pointerX, pointerY)) {
+        for (let i = 0; i < 4; i++) {
+            particles.push({
+                x: pointerX,
+                y: pointerY,
+                radius: 2 + Math.random() * 3,
+                alpha: 1,
+                vx: (Math.random() - 0.5) * 1.5,
+                vy: (Math.random() - 0.5) * 1.5
+            });
+        }
+    }
 
-    for (let i = mouseParticles.length - 1; i >= 0; i--) {
-        let p = mouseParticles[i];
+    for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
 
-        let gradient = mouseCtx.createRadialGradient(
+        let glow = mouseCtx.createRadialGradient(
             p.x, p.y, 0,
             p.x, p.y, p.radius * 3
         );
 
-        gradient.addColorStop(0, "rgba(255,255,200," + p.alpha + ")");
-        gradient.addColorStop(0.4, "rgba(255,215,0," + p.alpha + ")");
-        gradient.addColorStop(1, "rgba(255,215,0,0)");
+        glow.addColorStop(0, "rgba(255,255,200," + p.alpha + ")");
+        glow.addColorStop(0.4, "rgba(255,215,0," + p.alpha + ")");
+        glow.addColorStop(1, "rgba(255,215,0,0)");
 
-        mouseCtx.fillStyle = gradient;
+        mouseCtx.fillStyle = glow;
         mouseCtx.beginPath();
         mouseCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         mouseCtx.fill();
 
-        p.x += p.speedX;
-        p.y += p.speedY;
+        p.x += p.vx;
+        p.y += p.vy;
         p.alpha -= 0.03;
 
         if (p.alpha <= 0) {
-            mouseParticles.splice(i, 1);
+            particles.splice(i, 1);
         }
     }
 
