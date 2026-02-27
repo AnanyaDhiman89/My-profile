@@ -181,14 +181,40 @@ function drawPetal(p){
     petalCtx.translate(p.x,p.y);
     petalCtx.rotate(p.rotation);
 
-    petalCtx.fillStyle=p.color;
+    const w = p.size * 0.6;
+    const h = p.size;
 
     petalCtx.beginPath();
-    petalCtx.ellipse(0,0,p.size*0.6,p.size,0,0,Math.PI*2);
+
+    // Start at tapered base
+    petalCtx.moveTo(0, h);
+
+    // Left curve up
+    petalCtx.bezierCurveTo(
+        -w * 0.8, h * 0.6,
+        -w, -h * 0.2,
+        0, -h
+    );
+
+    // Right curve down
+    petalCtx.bezierCurveTo(
+        w, -h * 0.2,
+        w * 0.8, h * 0.6,
+        0, h
+    );
+
+    petalCtx.closePath();
+
+    // Soft natural gradient (no glow)
+    const gradient = petalCtx.createLinearGradient(0, -h, 0, h);
+    gradient.addColorStop(0, p.color);
+    gradient.addColorStop(1, "#d94f9d");
+
+    petalCtx.fillStyle = gradient;
     petalCtx.fill();
 
     petalCtx.restore();
-}
+    }
 
 function animatePetals(){
     petalCtx.clearRect(0,0,petalCanvas.width,petalCanvas.height);
