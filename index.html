@@ -238,15 +238,31 @@ function animatePetals(){
 }
 animatePetals();
 
-/* ---------- Enhanced Golden Mouse Magic ---------- */
+/* ---------- Clean Golden Mouse Magic ---------- */
 
 const mouseCanvas = document.getElementById("mouseCanvas");
 const mouseCtx = mouseCanvas.getContext("2d");
 let mouseParticles = [];
 
-/* Use Pointer Events (mouse + touch) */
+/* Make canvas fixed properly */
+mouseCanvas.style.position = "fixed";
+mouseCanvas.style.top = "0";
+mouseCanvas.style.left = "0";
+mouseCanvas.style.width = "100%";
+mouseCanvas.style.height = "100%";
+mouseCanvas.style.pointerEvents = "none";
+
+/* Ensure canvas size matches screen */
+function resizeMouseCanvas() {
+    mouseCanvas.width = window.innerWidth;
+    mouseCanvas.height = window.innerHeight;
+}
+resizeMouseCanvas();
+window.addEventListener("resize", resizeMouseCanvas);
+
+/* Pointer events (works on mouse + touch) */
 document.addEventListener("pointermove", e => {
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
         mouseParticles.push({
             x: e.clientX,
             y: e.clientY,
@@ -259,11 +275,11 @@ document.addEventListener("pointermove", e => {
 });
 
 document.addEventListener("pointerdown", e => {
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 25; i++) {
         mouseParticles.push({
             x: e.clientX,
             y: e.clientY,
-            radius: 3 + Math.random() * 5,
+            radius: 3 + Math.random() * 4,
             alpha: 1,
             speedX: (Math.random() - 0.5) * 4,
             speedY: (Math.random() - 0.5) * 4
@@ -272,22 +288,14 @@ document.addEventListener("pointerdown", e => {
 });
 
 function animateMouse() {
-
-    /* Soft ghost trail instead of full clear */
-    mouseCtx.fillStyle = "rgba(0,0,0,0.15)";
-    mouseCtx.fillRect(0, 0, mouseCanvas.width, mouseCanvas.height);
+    mouseCtx.clearRect(0, 0, mouseCanvas.width, mouseCanvas.height);
 
     for (let i = mouseParticles.length - 1; i >= 0; i--) {
-
         let p = mouseParticles[i];
-
-        /* Golden glow */
-        mouseCtx.beginPath();
-        mouseCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
 
         let gradient = mouseCtx.createRadialGradient(
             p.x, p.y, 0,
-            p.x, p.y, p.radius * 4
+            p.x, p.y, p.radius * 3
         );
 
         gradient.addColorStop(0, "rgba(255,255,200," + p.alpha + ")");
@@ -295,12 +303,13 @@ function animateMouse() {
         gradient.addColorStop(1, "rgba(255,215,0,0)");
 
         mouseCtx.fillStyle = gradient;
+        mouseCtx.beginPath();
+        mouseCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         mouseCtx.fill();
 
-        /* Movement */
         p.x += p.speedX;
         p.y += p.speedY;
-        p.alpha -= 0.025;
+        p.alpha -= 0.03;
 
         if (p.alpha <= 0) {
             mouseParticles.splice(i, 1);
