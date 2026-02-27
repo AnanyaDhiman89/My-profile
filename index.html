@@ -238,18 +238,18 @@ function animatePetals(){
 }
 animatePetals();
 
-/* ---------- Stable Hero-Only Golden Mouse Magic ---------- */
+/* ---------- Hero-Only Golden Mouse Magic ---------- */
 
 const mouseCanvas = document.getElementById("mouseCanvas");
 const mouseCtx = mouseCanvas.getContext("2d");
 const heroSection = document.querySelector(".hero");
 
-let particles = [];
-let isTouching = false;
-let pointerX = 0;
-let pointerY = 0;
+let mouseParticles = [];
+let isPointerDown = false;
+let lastX = 0;
+let lastY = 0;
 
-/* Fix canvas to screen */
+/* Make canvas fixed */
 mouseCanvas.style.position = "fixed";
 mouseCanvas.style.top = "0";
 mouseCanvas.style.left = "0";
@@ -257,15 +257,15 @@ mouseCanvas.style.width = "100%";
 mouseCanvas.style.height = "100%";
 mouseCanvas.style.pointerEvents = "none";
 
-function resizeCanvas() {
+function resizeMouseCanvas() {
     mouseCanvas.width = window.innerWidth;
     mouseCanvas.height = window.innerHeight;
 }
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
+resizeMouseCanvas();
+window.addEventListener("resize", resizeMouseCanvas);
 
-/* Check if inside hero */
-function insideHero(x, y) {
+/* Check if pointer is inside hero section */
+function isInsideHero(x, y) {
     const rect = heroSection.getBoundingClientRect();
     return (
         x >= rect.left &&
@@ -275,25 +275,52 @@ function insideHero(x, y) {
     );
 }
 
-/* Pointer events (works for mouse + touch) */
-document.addEventListener("pointerdown", e => {
-    if (insideHero(e.clientX, e.clientY)) {
+/* Continuous sparkle generator while finger is down */
+function generateSparkles() {
+    if (isPointerDown && isInsideHero(lastX, lastY)) {
+        for (let i = 0; i < 4; i++) {
+            mouseParticles.push({
+                x: lastX,
+                y: lastY,
+                radius: 2 + Math.random() * 3,
+                alpha: 1,
+                speedX: (Math.random() - 0.5) * 1.5,
+                speedY: (Math.random() - 0.5) * 1.5
+            });
+        }
+    }
+}
+
+/* ---------- Improved Touch Tracking ---------- */
+
+let isTouching = false;
+let touchX = 0;
+let touchY = 0;
+
+/* Touch Start */
+document.addEventListener("touchstart", e => {
+    const touch = e.touches[0];
+    touchX = touch.clientX;
+    touchY = touch.clientY;
+
+    if (isInsideHero(touchX, touchY)) {
         isTouching = true;
-        pointerX = e.clientX;
-        pointerY = e.clientY;
     }
 });
 
-document.addEventListener("pointermove", e => {
-    pointerX = e.clientX;
-    pointerY = e.clientY;
+/* Touch Move (this updates position WHILE scrolling) */
+document.addEventListener("touchmove", e => {
+    const touch = e.touches[0];
+    touchX = touch.clientX;
+    touchY = touch.clientY;
 });
 
-document.addEventListener("pointerup", () => {
+/* Touch End */
+document.addEventListener("touchend", () => {
     isTouching = false;
 });
 
-/* Stop effect if hero scrolls away */
+/* Stop sparkle if hero not visible */
 window.addEventListener("scroll", () => {
     const rect = heroSection.getBoundingClientRect();
     if (rect.bottom <= 0) {
@@ -301,47 +328,48 @@ window.addEventListener("scroll", () => {
     }
 });
 
-/* Animation loop */
+/* Animate */
 function animateMouse() {
+    
     mouseCtx.clearRect(0, 0, mouseCanvas.width, mouseCanvas.height);
-
-    /* Generate sparkles only while touching AND inside hero */
-    if (isTouching && insideHero(pointerX, pointerY)) {
-        for (let i = 0; i < 4; i++) {
-            particles.push({
-                x: pointerX,
-                y: pointerY,
-                radius: 2 + Math.random() * 3,
-                alpha: 1,
-                vx: (Math.random() - 0.5) * 1.5,
-                vy: (Math.random() - 0.5) * 1.5
-            });
-        }
+    
+    /* Generate sparkles only while touching inside hero */
+if (isTouching && isInsideHero(touchX, touchY)) {
+    for (let i = 0; i < 4; i++) {
+        mouseParticles.push({
+            x: touchX,
+            y: touchY,
+            radius: 2 + Math.random() * 3,
+            alpha: 1,
+            speedX: (Math.random() - 0.5) * 1.5,
+            speedY: (Math.random() - 0.5) * 1.5
+        });
     }
+    }
+    
+    for (let i = mouseParticles.length - 1; i >= 0; i--) {
+        let p = mouseParticles[i];
 
-    for (let i = particles.length - 1; i >= 0; i--) {
-        let p = particles[i];
-
-        let glow = mouseCtx.createRadialGradient(
+        let gradient = mouseCtx.createRadialGradient(
             p.x, p.y, 0,
             p.x, p.y, p.radius * 3
         );
 
-        glow.addColorStop(0, "rgba(255,255,200," + p.alpha + ")");
-        glow.addColorStop(0.4, "rgba(255,215,0," + p.alpha + ")");
-        glow.addColorStop(1, "rgba(255,215,0,0)");
+        gradient.addColorStop(0, "rgba(255,255,200," + p.alpha + ")");
+        gradient.addColorStop(0.4, "rgba(255,215,0," + p.alpha + ")");
+        gradient.addColorStop(1, "rgba(255,215,0,0)");
 
-        mouseCtx.fillStyle = glow;
+        mouseCtx.fillStyle = gradient;
         mouseCtx.beginPath();
         mouseCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         mouseCtx.fill();
 
-        p.x += p.vx;
-        p.y += p.vy;
+        p.x += p.speedX;
+        p.y += p.speedY;
         p.alpha -= 0.03;
 
         if (p.alpha <= 0) {
-            particles.splice(i, 1);
+            mouseParticles.splice(i, 1);
         }
     }
 
