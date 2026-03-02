@@ -297,6 +297,13 @@ mouseCanvas.style.width = "100%";
 mouseCanvas.style.height = "100%";
 mouseCanvas.style.pointerEvents = "none";
 
+function resizeMouseCanvas() {
+    mouseCanvas.width = window.innerWidth;
+    mouseCanvas.height = window.innerHeight;
+}
+resizeMouseCanvas();
+window.addEventListener("resize", resizeMouseCanvas);
+
 /* Check if pointer is inside hero section */
 function isInsideHero(x, y) {
     const rect = heroSection.getBoundingClientRect();
