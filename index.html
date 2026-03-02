@@ -482,21 +482,25 @@ function showRandomComment(){
 
     commentLayer.appendChild(box);
 
-    box.addEventListener("touchend", function(e){
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTapTime;
+    function handleBurst() {
+    const rect = box.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
 
-    if (tapLength < 300 && tapLength > 0) {
-        const rect = box.getBoundingClientRect();
-        const centerX = rect.left + rect.width/2;
-        const centerY = rect.top + rect.height/2;
+    createGoldenBurst(centerX, centerY);
 
-        createGoldenBurst(centerX, centerY);
-
+    if (commentLayer.contains(box)) {
         commentLayer.removeChild(box);
     }
+    }
 
-    lastTapTime = currentTime;
+    // Desktop
+    box.addEventListener("click", handleBurst);
+
+    // Mobile
+    box.addEventListener("touchend", function(e){
+      e.preventDefault(); 
+      handleBurst();
     });
 
     setTimeout(()=>{
