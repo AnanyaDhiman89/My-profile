@@ -276,6 +276,8 @@ let mouseParticles = [];
 let isPointerDown = false;
 let lastX = 0;
 let lastY = 0;
+let burstParticles = [];
+let lastTapTime = 0;
 
 /* Make canvas fixed */
 mouseCanvas.style.position = "fixed";
@@ -402,10 +404,51 @@ if (isTouching && isInsideHero(touchX, touchY)) {
         }
     }
 
+    // Render burst particles
+for (let i = burstParticles.length - 1; i >= 0; i--) {
+    let p = burstParticles[i];
+
+    let gradient = mouseCtx.createRadialGradient(
+        p.x, p.y, 0,
+        p.x, p.y, p.radius * 3
+    );
+
+    gradient.addColorStop(0, "rgba(255,215,0," + p.alpha + ")");
+    gradient.addColorStop(1, "rgba(255,215,0,0)");
+
+    mouseCtx.fillStyle = gradient;
+    mouseCtx.beginPath();
+    mouseCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    mouseCtx.fill();
+
+    p.x += p.speedX;
+    p.y += p.speedY;
+    p.alpha -= 0.03;
+
+    if (p.alpha <= 0) {
+        burstParticles.splice(i, 1);
+    }
+    }
+
     requestAnimationFrame(animateMouse);
 }
 
 animateMouse();
+
+/* --------- Golden Burst Of Comments ---------- */
+    
+function createGoldenBurst(x, y){
+for(let i=0; i<25; i++){
+    burstParticles.push({
+        x: x,
+        y: y,
+        radius: 2 + Math.random()*4,
+        alpha: 1,
+        speedX: (Math.random()-0.5)*4,
+        speedY: (Math.random()-0.5)*4
+    });
+}
+}
 
 /* ---------- Floating Comments ---------- */
 
@@ -439,6 +482,23 @@ function showRandomComment(){
 
     commentLayer.appendChild(box);
 
+    box.addEventListener("touchend", function(e){
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTapTime;
+
+    if (tapLength < 300 && tapLength > 0) {
+        const rect = box.getBoundingClientRect();
+        const centerX = rect.left + rect.width/2;
+        const centerY = rect.top + rect.height/2;
+
+        createGoldenBurst(centerX, centerY);
+
+        commentLayer.removeChild(box);
+    }
+
+    lastTapTime = currentTime;
+    });
+
     setTimeout(()=>{
         box.style.opacity="1";
         box.style.transform="scale(1)";
@@ -450,7 +510,9 @@ function showRandomComment(){
     },3500);
 
     setTimeout(()=>{
+    if (commentLayer.contains(box)) {
         commentLayer.removeChild(box);
+    }
     },4500);
 }
 
