@@ -473,16 +473,16 @@ const comments = [
 
 const commentLayer = document.getElementById("comment-layer");
 
-function showRandomComment(){
-    const box=document.createElement("div");
+function showRandomComment() {
+    const box = document.createElement("div");
     box.classList.add("comment-box");
 
-    box.textContent=comments[Math.floor(Math.random()*comments.length)];
+    box.textContent = comments[Math.floor(Math.random() * comments.length)];
 
     const hero = document.querySelector(".hero");
 
-    const maxWidth = hero.offsetWidth - 300;   // prevents overflow
-    const maxHeight = hero.offsetHeight - 120; // prevents cutoff
+    const maxWidth = hero.offsetWidth - 300;
+    const maxHeight = hero.offsetHeight - 120;
 
     const left = Math.random() * maxWidth;
     const top = Math.random() * maxHeight;
@@ -492,17 +492,8 @@ function showRandomComment(){
 
     commentLayer.appendChild(box);
 
-    function handleBurst() {
-    const rect = box.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-
-    createGoldenBurst(centerX, centerY);
-
-    if (commentLayer.contains(box)) {
-        commentLayer.removeChild(box);
-    }
-    }
+    /* Prevent mobile double-tap zoom */
+    box.style.touchAction = "manipulation";
 
     let tapCount = 0;
     let tapTimer = null;
@@ -517,24 +508,24 @@ function showRandomComment(){
         if (commentLayer.contains(box)) {
             commentLayer.removeChild(box);
         }
-}
-
-box.addEventListener("pointerdown", function(e) {
-    tapCount++;
-
-    if (tapCount === 1) {
-        tapTimer = setTimeout(() => {
-            tapCount = 0;
-        }, 300);
-    } else if (tapCount === 2) {
-        clearTimeout(tapTimer);
-        tapCount = 0;
-        triggerBurst();
     }
-});
+
+    box.addEventListener("pointerdown", function () {
+        tapCount++;
+
+        if (tapCount === 1) {
+            tapTimer = setTimeout(() => {
+                tapCount = 0;
+            }, 300);
+        } else if (tapCount === 2) {
+            clearTimeout(tapTimer);
+            tapCount = 0;
+            triggerBurst();
+        }
+    });
 }
 
-setInterval(showRandomComment,5000);
+setInterval(showRandomComment, 5000);
 showRandomComment();
 
 </script>
