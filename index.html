@@ -454,8 +454,8 @@ for(let i=0; i<25; i++){
         y: y,
         radius: 2 + Math.random()*4,
         alpha: 1,
-        speedX: (Math.random()-0.5)*4,
-        speedY: (Math.random()-0.5)*4
+        speedX: (Math.random()-0.5)*6,
+        speedY: (Math.random()-0.5)*6
     });
 }
 }
@@ -504,30 +504,34 @@ function showRandomComment(){
     }
     }
 
-    // Desktop
-    box.addEventListener("click", handleBurst);
+    let tapCount = 0;
+    let tapTimer = null;
 
-    // Mobile
-    box.addEventListener("touchend", function(e){
-      e.preventDefault(); 
-      handleBurst();
-    });
+    function triggerBurst() {
+        const rect = box.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
 
-    setTimeout(()=>{
-        box.style.opacity="1";
-        box.style.transform="scale(1)";
-    },100);
+        createGoldenBurst(centerX, centerY);
 
-    setTimeout(()=>{
-        box.style.opacity="0";
-        box.style.transform="scale(0.9)";
-    },3500);
+        if (commentLayer.contains(box)) {
+            commentLayer.removeChild(box);
+        }
+}
 
-    setTimeout(()=>{
-    if (commentLayer.contains(box)) {
-        commentLayer.removeChild(box);
+box.addEventListener("pointerdown", function(e) {
+    tapCount++;
+
+    if (tapCount === 1) {
+        tapTimer = setTimeout(() => {
+            tapCount = 0;
+        }, 300);
+    } else if (tapCount === 2) {
+        clearTimeout(tapTimer);
+        tapCount = 0;
+        triggerBurst();
     }
-    },4500);
+});
 }
 
 setInterval(showRandomComment,5000);
