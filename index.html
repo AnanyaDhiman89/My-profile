@@ -270,6 +270,16 @@ animatePetals();
 
 const mouseCanvas = document.getElementById("mouseCanvas");
 const mouseCtx = mouseCanvas.getContext("2d");
+    
+/* Set actual canvas resolution */
+mouseCanvas.width = window.innerWidth;
+mouseCanvas.height = window.innerHeight;
+
+window.addEventListener("resize", () => {
+    mouseCanvas.width = window.innerWidth;
+    mouseCanvas.height = window.innerHeight;
+});
+    
 const heroSection = document.querySelector(".hero");
 
 let mouseParticles = [];
