@@ -523,7 +523,24 @@ function showRandomComment() {
             triggerBurst();
         }
     });
-}
+
+    // Make the box visible, then hide & remove it after a delay
+    setTimeout(() => {
+        box.style.opacity = "1";
+        box.style.transform = "scale(1)";
+    }, 100);
+
+    setTimeout(() => {
+        box.style.opacity = "0";
+        box.style.transform = "scale(0.9)";
+    }, 3500);
+
+    setTimeout(() => {
+        if (commentLayer.contains(box)) {
+            commentLayer.removeChild(box);
+        }
+    }, 4500);
+    }
 
 setInterval(showRandomComment, 5000);
 showRandomComment();
