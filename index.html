@@ -503,6 +503,9 @@ function showRandomComment() {
         if (commentLayer.contains(box)) {
             commentLayer.removeChild(box);
         }
+        
+        clearTimeout(commentTimer);
+        scheduleNextComment();
     }
 
     box.addEventListener("pointerdown", function () {
@@ -537,8 +540,17 @@ function showRandomComment() {
     }, 4500);
     }
 
-setInterval(showRandomComment, 5000);
+let commentTimer;
+
+function scheduleNextComment(){
+    commentTimer = setTimeout(() => {
+        showRandomComment();
+        scheduleNextComment();
+    }, 5000);
+    }
+    
 showRandomComment();
+scheduleNextComment();
 
 </script>
 
