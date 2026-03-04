@@ -298,15 +298,6 @@ animatePetals();
 const mouseCanvas = document.getElementById("mouseCanvas");
 const mouseCtx = mouseCanvas.getContext("2d");
     
-/* Set actual canvas resolution */
-mouseCanvas.width = window.innerWidth;
-mouseCanvas.height = window.innerHeight;
-
-window.addEventListener("resize", () => {
-    mouseCanvas.width = window.innerWidth;
-    mouseCanvas.height = window.innerHeight;
-});
-    
 const heroSection = document.querySelector(".hero");
 
 let mouseParticles = [];
@@ -318,13 +309,6 @@ let lastTapTime = 0;
 
 /* Make canvas fixed */
 mouseCanvas.style.pointerEvents = "none";
-
-function resizeMouseCanvas() {
-    mouseCanvas.width = window.innerWidth;
-    mouseCanvas.height = window.innerHeight;
-}
-resizeMouseCanvas();
-window.addEventListener("resize", resizeMouseCanvas);
 
 /* Check if pointer is inside hero section */
 function isInsideHero(x, y) {
@@ -359,35 +343,50 @@ let isTouching = false;
 let touchX = 0;
 let touchY = 0;
 
-/* Touch Start */
-document.addEventListener("touchstart", e => {
+/* Touch events (mobile) */
+document.addEventListener("touchstart", (e) => {
     const touch = e.touches[0];
     touchX = touch.clientX;
     touchY = touch.clientY;
-
     if (isInsideHero(touchX, touchY)) {
         isTouching = true;
     }
-});
+}, { passive: true });
 
-/* Touch Move (this updates position WHILE scrolling) */
-document.addEventListener("touchmove", e => {
+document.addEventListener("touchmove", (e) => {
     const touch = e.touches[0];
     touchX = touch.clientX;
     touchY = touch.clientY;
-});
+}, { passive: true });
 
-/* Touch End */
 document.addEventListener("touchend", () => {
     isTouching = false;
 });
 
-/* Stop sparkle if hero not visible */
+/* Stop sparkle if hero not visible (keeps things tidy while scrolling) */
 window.addEventListener("scroll", () => {
     const rect = heroSection.getBoundingClientRect();
     if (rect.bottom <= 0) {
         isTouching = false;
     }
+});
+
+/* Pointer events (desktop & pointer devices) */
+document.addEventListener("pointerdown", (e) => {
+    if (isInsideHero(e.clientX, e.clientY)) {
+        isTouching = true;
+        touchX = e.clientX;
+        touchY = e.clientY;
+    }
+});
+
+document.addEventListener("pointermove", (e) => {
+    touchX = e.clientX;
+    touchY = e.clientY;
+});
+
+document.addEventListener("pointerup", () => {
+    isTouching = false;
 });
 
 /* Animate */
