@@ -532,22 +532,22 @@ function showRandomComment() {
     setTimeout(() => {
         box.style.opacity = "0";
         box.style.transform = "scale(0.9)";
-    }, 3500);
+    }, 3000);
 
     setTimeout(() => {
         if (commentLayer.contains(box)) {
             commentLayer.removeChild(box);
         }
-    }, 4500);
+    }, 4000);
     }
 
 let commentTimer;
 
 /**
  * scheduleNextComment(delay)
- * - delay (optional): milliseconds until next comment; defaults to 3500
+ * - delay (optional): milliseconds until next comment; defaults to 3000
  */
-function scheduleNextComment(delay = 3500) {
+function scheduleNextComment(delay = 3000) {
     // clear any existing to be safe
     clearTimeout(commentTimer);
     commentTimer = setTimeout(() => {
@@ -557,7 +557,7 @@ function scheduleNextComment(delay = 3500) {
     }
     
 showRandomComment();
-scheduleNextComment(); // starts the loop with default 3500ms for normal auto-appear
+scheduleNextComment(); // starts the loop with default 3000ms for normal auto-appear
 
 </script>
 
