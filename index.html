@@ -105,11 +105,13 @@ body{
 
 /* ------------ Tint Layer ------------- */
 .tint-layer{
-    position:absolute;
-    inset:0;
-    background: rgba(95, 158, 160, 0.15);
-    z-index:3;
-    pointer-events:none;
+    position: absolute;   /* already required */
+    inset: 0;
+    /* hex -> use a matching blue then use rgba for opacity */
+    background: rgba(95, 158, 160, 0.30); /* 30% opacity of #5F9EA0 */
+    z-index: 3;           /* should be above #petals (2) and #particles (1) */
+    pointer-events: none;
+    mix-blend-mode: overlay; /* optional: try 'overlay' or 'screen' for nicer tint */
 }
 
 /* ------------- Profile ------------- */
@@ -134,11 +136,12 @@ body{
     <source src="VN20260304_142250.mp4" type="video/mp4">
    </video>
 
-   <div class="tint-layer"></div>
-
-
     <canvas id="particles"></canvas>
     <canvas id="petals"></canvas>
+
+   <!-- TINT goes above video + canvases but below mouse sparkles and comments -->
+   <div class="tint-layer"></div>
+
     <div id="comment-layer"></div>
     <canvas id="mouseCanvas"></canvas>
     <h1 id="typing-text"></h1>
