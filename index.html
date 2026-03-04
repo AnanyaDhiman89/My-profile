@@ -504,9 +504,9 @@ function showRandomComment() {
             commentLayer.removeChild(box);
         }
 
-        // Reset scheduler and schedule next comment after 2 seconds
+        // Reset scheduler and schedule next comment after 1 seconds
         clearTimeout(commentTimer);
-        scheduleNextComment(1500); // 1500 ms = 1.5 seconds
+        scheduleNextComment(1000); // 1000 ms = 1 seconds
     }
 
     box.addEventListener("pointerdown", function () {
@@ -545,9 +545,9 @@ let commentTimer;
 
 /**
  * scheduleNextComment(delay)
- * - delay (optional): milliseconds until next comment; defaults to 3000
+ * - delay (optional): milliseconds until next comment; defaults to 2500
  */
-function scheduleNextComment(delay = 3000) {
+function scheduleNextComment(delay = 2500) {
     // clear any existing to be safe
     clearTimeout(commentTimer);
     commentTimer = setTimeout(() => {
@@ -557,7 +557,7 @@ function scheduleNextComment(delay = 3000) {
     }
     
 showRandomComment();
-scheduleNextComment(); // starts the loop with default 3000ms for normal auto-appear
+scheduleNextComment(); // starts the loop with default 2500ms for normal auto-appear
 
 </script>
 
