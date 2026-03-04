@@ -53,7 +53,7 @@ body{
         
 #typing-text{
     position:relative;
-    z-index:7;
+    z-index:6;
     font-size:48px;
     opacity:0;
     background:rgba(0,0,0,0.4);
@@ -73,8 +73,8 @@ body{
 }
 
 #particles{z-index:1;}
-#petals{z-index:3;}
-#mouseCanvas{z-index:6; pointer-events:none;}
+#petals{z-index:2;}
+#mouseCanvas{z-index:4; pointer-events:none;}
 #comment-layer{
     position:absolute;
     top:0;
@@ -124,6 +124,10 @@ body{
     <source src="VN20260304_142250.mp4" type="video/mp4">
    </video>
 
+   <div class="tint-layer"></div>
+
+   <canvas id="particles"></canvas>
+
     <canvas id="particles"></canvas>
     <canvas id="petals"></canvas>
     <div id="comment-layer"></div>
@@ -154,6 +158,15 @@ document.addEventListener("click", () => {
     heroVideo.muted = false;
     heroVideo.play().catch(()=>{/* ignore */});
 }, { once: true });
+
+/* ------------ Tint Layer ------------- */
+.tint-layer{
+    position:absolute;
+    inset:0;
+    background: rgba(100, 180, 255, 0.18); /* soft blue tint */
+    z-index:3;
+    pointer-events:none;
+}
 
 /* ---------- Resize Canvas ---------- */
 function resizeCanvas(){
