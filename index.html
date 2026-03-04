@@ -11,26 +11,29 @@ body{
 }
 
 .hero-video{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    z-index:0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none; /* allow clicks to pass through */
+    /* preload handled by attribute; pointer-events none prevents capturing taps */
 }
 
 .hero{
-    position:relative;
-    background-video:url("VN20260304_142250.mp4");
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    color:#E0FFFF;
-    overflow:hidden;
+    position: relative;
+    /* background-image removed — using the <video> element instead */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #E0FFFF;
+    overflow: hidden;
     box-shadow: inset 0 0 120px rgba(0,0,0,0.4);
+    background-color: #000; /* fallback while video loads */
 }
 
 .hero::after{
@@ -117,9 +120,9 @@ body{
 
 <section class="hero">
 
-    <video id="heroVideo" autoplay loop playsinline class="hero-video">
-        <source src="VN20260304_142250.mp4" type="video/mp4">
-    </video>
+   <video id="heroVideo" class="hero-video" autoplay loop playsinline muted preload="auto">
+    <source src="VN20260304_142250.mp4" type="video/mp4">
+   </video>
 
     <canvas id="particles"></canvas>
     <canvas id="petals"></canvas>
@@ -138,11 +141,18 @@ body{
 /* --------- Video -------- */
 const heroVideo = document.getElementById("heroVideo");
 
-heroVideo.muted = true; // start muted so autoplay works
+// ensure muted attribute is set (helps autoplay on mobile/desktop)
+heroVideo.muted = true;
 
+// Try to play now (muted autoplay usually allowed)
+heroVideo.play().catch(()=> {
+    // play may fail on some browsers until interaction — that's okay
+});
+
+// On first user click/tap, unmute and play with audio
 document.addEventListener("click", () => {
     heroVideo.muted = false;
-    heroVideo.play();
+    heroVideo.play().catch(()=>{/* ignore */});
 }, { once: true });
 
 /* ---------- Resize Canvas ---------- */
