@@ -103,6 +103,16 @@ body{
     pointer-events:auto;
 }
 
+/* ------------ Tint Layer ------------- */
+.tint-layer{
+    position:absolute;
+    inset:0;
+    background: rgba(100, 180, 255, 0.15);
+    z-index:3;
+    pointer-events:none;
+}
+
+/* ------------- Profile ------------- */
 .profile{
     background-color:#5F9EA0;
     padding:100px 0;
@@ -126,7 +136,6 @@ body{
 
    <div class="tint-layer"></div>
 
-   <canvas id="particles"></canvas>
 
     <canvas id="particles"></canvas>
     <canvas id="petals"></canvas>
@@ -158,15 +167,6 @@ document.addEventListener("click", () => {
     heroVideo.muted = false;
     heroVideo.play().catch(()=>{/* ignore */});
 }, { once: true });
-
-/* ------------ Tint Layer ------------- */
-.tint-layer{
-    position:absolute;
-    inset:0;
-    background: rgba(100, 180, 255, 0.18); /* soft blue tint */
-    z-index:3;
-    pointer-events:none;
-}
 
 /* ---------- Resize Canvas ---------- */
 function resizeCanvas(){
