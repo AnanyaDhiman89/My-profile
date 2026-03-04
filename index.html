@@ -10,12 +10,20 @@ body{
     overflow-x:hidden;
 }
 
+.hero-video{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:0;
+}
+
 .hero{
     position:relative;
+    background-video:url("VN20260304_142250.mp4");
     height:100vh;
-    background-image:url("Screenshot_2026-02-26-14-47-00-466.jpeg");
-    background-size:cover;
-    background-position:center 0px;
     display:flex;
     justify-content:center;
     align-items:center;
@@ -108,11 +116,17 @@ body{
 <body>
 
 <section class="hero">
+
+    <video id="heroVideo" autoplay loop playsinline class="hero-video">
+        <source src="VN20260304_142250.mp4" type="video/mp4">
+    </video>
+
     <canvas id="particles"></canvas>
     <canvas id="petals"></canvas>
     <div id="comment-layer"></div>
     <canvas id="mouseCanvas"></canvas>
     <h1 id="typing-text"></h1>
+
 </section>
 
 <section class="profile">
@@ -120,6 +134,16 @@ body{
 </section>
 
 <script>
+
+/* --------- Video -------- */
+const heroVideo = document.getElementById("heroVideo");
+
+heroVideo.muted = true; // start muted so autoplay works
+
+document.addEventListener("click", () => {
+    heroVideo.muted = false;
+    heroVideo.play();
+}, { once: true });
 
 /* ---------- Resize Canvas ---------- */
 function resizeCanvas(){
@@ -130,13 +154,6 @@ function resizeCanvas(){
 }
 window.addEventListener("resize",resizeCanvas);
 resizeCanvas();
-
-/* ---------- Subtle Parallax ---------- */
-window.addEventListener("scroll",()=>{
-    const scrollY=window.scrollY;
-    const hero=document.querySelector(".hero");
-    hero.style.backgroundPosition=`center ${scrollY * 0.15}px`;
-});
 
 /* ---------- Typing ---------- */
 const text="Welcome to My World";
