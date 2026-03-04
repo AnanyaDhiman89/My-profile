@@ -504,9 +504,9 @@ function showRandomComment() {
             commentLayer.removeChild(box);
         }
 
-        // Reset scheduler and schedule next comment after 1 seconds
+        // Reset scheduler and schedule next comment after 1.5 seconds
         clearTimeout(commentTimer);
-        scheduleNextComment(1000); // 1000 ms = 1 seconds
+        scheduleNextComment(1500); // 1500 ms = 1.5 seconds
     }
 
     box.addEventListener("pointerdown", function () {
