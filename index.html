@@ -96,6 +96,18 @@ body{
     pointer-events: none;
 }
 
+.glass-tint {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* This color tints the video and petals without blurring them */
+    background: rgba(20, 20, 60, 0.15); 
+    z-index: 3; 
+    pointer-events: none; /* Crucial: This lets you click through to comments */
+}
+
 /* comment boxes themselves allow pointer events */
 .comment-box{
     position:absolute;
@@ -144,6 +156,8 @@ body{
    <!-- 3) petals canvas -->
    <canvas id="petals"></canvas>
 
+   <div class="glass-tint"></div>
+    
    <!-- 5) comment layer (boxes) -->
    <div id="comment-layer"></div>
 
