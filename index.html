@@ -130,14 +130,43 @@ body{
 
 /* profile area (below hero) */
 .profile{
-    background-color:#5F9EA0;
-    padding:100px 0;
+    position:relative;
+    padding:120px 0;
     text-align:center;
+    overflow:hidden;
+
+    
+    background-image: url("Screenshot_2026-03-04-18-07-58-609.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
+
+.profile::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:200px;
+
+    /* This matches hero gradient end color */
+    background: linear-gradient(
+        to bottom,
+        #5F9EA0 0%,
+        rgba(95,158,160,0) 100%
+    );
+
+    pointer-events:none;
+}
+
 .profile img{
+    position:relative;
+    z-index:2;
     width:300px;
     border-radius:15px;
 }
+
 </style>
 </head>
 
