@@ -37,7 +37,7 @@ body{
     background-color: #000; /* fallback while video loads */
 }
 
-/* bottom soft gradient to blend with profile area - keep this (transparent) */
+/* profile gradient */
 .hero::after{
     content:"";
     position:absolute;
@@ -48,9 +48,9 @@ body{
     background: linear-gradient(
         to bottom,
         rgba(0,0,0,0) 0%,
-        rgba(95,158,160,0.25) 100%
-    ); /* transparent gradient, not solid hex */
-    z-index: 4;                 /* above tint (3) but below the mouse sparks/comment/text */
+        #5F9EA040 100%
+    );
+    z-index: 4;
     pointer-events:none;
 }
 
@@ -81,16 +81,6 @@ body{
 
 /* petals should be above tiny particles but below tint */
 #petals{ z-index: 2; }
-
-/* tint layer (the subtle blue glass) - above petals but below mouse sparkles/comments */
-.tint-layer{
-    position:absolute;
-    inset:0;
-    background: rgba(95, 158, 160, 0.12); /* subtle blue tint (12%) */
-    z-index: 3;
-    pointer-events:none;
-    /* optional: try mix-blend-mode: screen; for different visual results */
-}
 
 /* mouse sparkle canvas (top sparkles + bursts) */
 #mouseCanvas{ z-index: 5; pointer-events:none; }
@@ -153,9 +143,6 @@ body{
 
    <!-- 3) petals canvas -->
    <canvas id="petals"></canvas>
-
-   <!-- 4) tint layer (subtle blue glass) -->
-   <div class="tint-layer"></div>
 
    <!-- 5) comment layer (boxes) -->
    <div id="comment-layer"></div>
