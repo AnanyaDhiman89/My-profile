@@ -4,12 +4,14 @@
 <title>My Profile</title>
 
 <style>
+/* ---------------- base ---------------- */
 body{
     margin:0;
     font-family:Arial, sans-serif;
     overflow-x:hidden;
 }
 
+/* ---------- video (bottom) ---------- */
 .hero-video{
     position: absolute;
     top: 0;
@@ -17,14 +19,13 @@ body{
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: 0;
-    pointer-events: none; /* allow clicks to pass through */
-    /* preload handled by attribute; pointer-events none prevents capturing taps */
+    z-index: 0;                 /* bottom-most */
+    pointer-events: none;
 }
 
+/* ---------- hero container ---------- */
 .hero{
     position: relative;
-    /* background-image removed — using the <video> element instead */
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -36,6 +37,7 @@ body{
     background-color: #000; /* fallback while video loads */
 }
 
+/* bottom soft gradient to blend with profile area - keep this (transparent) */
 .hero::after{
     content:"";
     position:absolute;
@@ -43,18 +45,19 @@ body{
     left:0;
     width:100%;
     height:200px;
-    background:linear-gradient(
+    background: linear-gradient(
         to bottom,
         rgba(0,0,0,0) 0%,
         rgba(95,158,160,0.25) 100%
-    );
-    z-index:4;
+    ); /* transparent gradient, not solid hex */
+    z-index: 4;                 /* above tint (3) but below the mouse sparks/comment/text */
     pointer-events:none;
 }
-        
+
+/* main text */
 #typing-text{
-    position:relative;
-    z-index:7;
+    position: relative;
+    z-index: 9;                 /* top-most so text always visible */
     font-size:48px;
     opacity:0;
     background:rgba(0,0,0,0.4);
@@ -64,27 +67,46 @@ body{
     animation:fadeIn 1.5s forwards;
 }
 
-@keyframes fadeIn{
-    to{opacity:1;}
-}
+@keyframes fadeIn{ to{opacity:1;} }
 
+/* make all canvas children positioned absolute and full size */
 .hero canvas{
     position:absolute;
     inset:0;
 }
 
-#particles{z-index:2;}
-#petals{z-index:3;}
-#mouseCanvas{z-index:5; pointer-events:none;}
+/* explicit z-index for canvases and layers */
+/* tiny floating sparkles (background) */
+#particles{ z-index: 1; }
+
+/* petals should be above tiny particles but below tint */
+#petals{ z-index: 2; }
+
+/* tint layer (the subtle blue glass) - above petals but below mouse sparkles/comments */
+.tint-layer{
+    position:absolute;
+    inset:0;
+    background: rgba(95, 158, 160, 0.12); /* subtle blue tint (12%) */
+    z-index: 3;
+    pointer-events:none;
+    /* optional: try mix-blend-mode: screen; for different visual results */
+}
+
+/* mouse sparkle canvas (top sparkles + bursts) */
+#mouseCanvas{ z-index: 5; pointer-events:none; }
+
+/* comment layer (glass boxes) - above everything interactive */
 #comment-layer{
     position:absolute;
     top:0;
     left:0;
     width:100%;
     height:100%;
-    z-index:6;
+    z-index: 6;
+    pointer-events: none; /* keep pointer events off globally; individual .comment-box will allow events */
 }
 
+/* comment boxes themselves allow pointer events */
 .comment-box{
     position:absolute;
     padding:14px 24px;
@@ -101,25 +123,15 @@ body{
     transition:opacity 0.8s ease, transform 0.8s ease;
     max-width:300px;
     text-align:center;
-    pointer-events:auto;
+    pointer-events:auto; /* comments receive pointer events */
 }
 
-/* ------------ Tint Layer ------------- */
-.tint-layer{
-    position:absolute;
-    inset:0;
-    background: rgba(95, 158, 160, 0.12); /* 12% */
-    z-index:3;
-    pointer-events:none;
-}
-
-/* ------------- Profile ------------- */
+/* profile area (below hero) */
 .profile{
     background-color:#5F9EA0;
     padding:100px 0;
     text-align:center;
 }
-
 .profile img{
     width:300px;
     border-radius:15px;
@@ -131,24 +143,29 @@ body{
 
 <section class="hero">
 
+   <!-- 1) Video at the bottom -->
    <video id="heroVideo" class="hero-video" autoplay loop playsinline muted preload="auto">
     <source src="VN20260304_142250.mp4" type="video/mp4">
    </video>
 
-    <canvas id="particles"></canvas>
-    <canvas id="petals"></canvas>
+   <!-- 2) tiny background sparkles canvas -->
+   <canvas id="particles"></canvas>
 
-   <!-- TINT goes above video + canvases but below mouse sparkles and comments -->
+   <!-- 3) petals canvas -->
+   <canvas id="petals"></canvas>
+
+   <!-- 4) tint layer (subtle blue glass) -->
    <div class="tint-layer"></div>
 
-    <div id="comment-layer"></div>
-    <canvas id="mouseCanvas"></canvas>
-    <h1 id="typing-text"></h1>
+   <!-- 5) comment layer (boxes) -->
+   <div id="comment-layer"></div>
 
-</section>
+   <!-- 6) mouse sparkle canvas (top) -->
+   <canvas id="mouseCanvas"></canvas>
 
-<section class="profile">
-    <img src="Screenshot_2026-02-25-18-16-23-301.jpeg" alt="My Profile Image">
+   <!-- 7) main center text -->
+   <h1 id="typing-text"></h1>
+
 </section>
 
 <script>
