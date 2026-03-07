@@ -119,15 +119,14 @@ body{
 /* profile area (below hero) */
 .profile{
     position:relative;
-    padding:120px 0;
-    text-align:center;
+    min-height:100vh;
+    padding:120px 80px;
     overflow:hidden;
 
-    
-    background-image: url("2026-03-07_20-17-54_1.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background-image:url("2026-03-07_20-17-54_1.jpg");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
 }
 
 .profile::before{
@@ -149,10 +148,15 @@ body{
 }
 
 .profile img{
-    position:relative;
+    position:absolute;
+    top:60px;
+    left:80px;
+
+    width:260px;
+
+    border-radius:20px;
+
     z-index:2;
-    width:300px;
-    border-radius:15px;
 }
 
 </style>
