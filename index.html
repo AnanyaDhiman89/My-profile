@@ -147,7 +147,7 @@ body{
     pointer-events:none;
 }
 
-.profile img{
+.profile-video{
     position:absolute;
     top:40px;
     left:40px;
@@ -162,10 +162,12 @@ body{
     box-shadow:0 0 15px #4682B4,
                0 0 30px rgba(70,130,180,0.7);
 
+    cursor:pointer;
+
     z-index:2;
 }
 
-.profile img:hover{
+.profile-video:hover{
     box-shadow:0 0 25px #4682B4,
                0 0 50px rgba(70,130,180,0.9);
 }
@@ -201,7 +203,11 @@ body{
 
 <!-- === paste this directly AFTER the hero </section> and BEFORE your <script> === -->
 <section class="profile">
-    <img src="Screenshot_2026-03-07-20-08-22-514.jpeg" alt="My Profile Image">
+
+<video id="profileVideo" class="profile-video" poster="Screenshot_2026-03-07-20-08-22-514.jpeg">
+    <source src="VN20260307_225515.mp4" type="video/mp4">
+</video>
+
 </section>
 
 <script>
@@ -649,7 +655,28 @@ function scheduleNextComment(delay = 3000) {
         scheduleNextComment(); // after showing, schedule next with default delay
     }, delay);
     }
-    
+
+/* ---------- Profile Click Video ---------- */
+
+const profileVideo = document.getElementById("profileVideo");
+
+profileVideo.muted = true;
+
+profileVideo.addEventListener("click", function(){
+
+    if(profileVideo.paused){
+        profileVideo.play();
+    }
+
+});
+
+profileVideo.addEventListener("ended", function(){
+
+    profileVideo.currentTime = 0;
+    profileVideo.pause();
+
+});
+
 showRandomComment();
 scheduleNextComment(); // starts the loop with default 3000ms for normal auto-appear
 
