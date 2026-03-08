@@ -66,7 +66,7 @@ body{
 #typing-text{
     position: relative;
     z-index: 9;                 /* top-most so text always visible */
-    font-size:48px;
+    font-size:clamp(42px,6vw,48px);
     opacity:0;
     background:rgba(0,0,0,0.4);
     padding:15px 30px;
@@ -121,6 +121,7 @@ body{
     transition:opacity 0.8s ease, transform 0.8s ease;
     max-width:300px;
     text-align:center;
+    line-height:1.4;
     pointer-events:auto; /* comments receive pointer events */
 }
 
@@ -193,21 +194,12 @@ body{
 
 }
 
-@media (max-width:600px){
-
-.profile-video{
-    width:240px;
-    left:20px;
-    top:90px;
-}
-
-}
-
 .profile-video.touch-glow{
     box-shadow:0 0 25px #4682B4,
                0 0 50px rgba(70,130,180,0.9);
 }
 
+/* ----------- Large screen adjustments ----------- */
 @media (min-width:1400px){
 
 .hero{
@@ -216,6 +208,34 @@ body{
 
 .hero-video{
     height:100%;
+}
+
+.comment-box{
+    font-size:36px;
+    padding:18px 30px;
+    max-width:340px;
+}
+
+}
+
+/* ---------- Mobile adjustments ---------- */
+@media (max-width:600px){
+
+.profile-video{
+    width:240px;
+    left:20px;
+    top:90px;
+}
+
+#typing-text{
+    font-size:56px;
+    padding:20px 35px;
+}
+
+.comment-box{
+    font-size:32px;
+    padding:18px 28px;
+    max-width:340px;
 }
 
 }
