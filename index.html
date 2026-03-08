@@ -93,6 +93,20 @@ body{
 /* mouse sparkle canvas (top sparkles + bursts) */
 #mouseCanvas{ z-index: 5; pointer-events:none; }
 
+/* ---------- profile sparkles (above profile bg, below profile video) ---------- */
+#profileParticles{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;            /* below .profile-video (which has z-index:2) */
+    pointer-events: none;
+}
+
+/* ensure profile container is the positioning parent (you already have position:relative on .profile) */
+/* no further CSS needed — profile video remains z-index:2 so it's above the sparkles */
+
 /* comment layer (glass boxes) - above everything interactive */
 #comment-layer{
     position:absolute;
@@ -276,8 +290,9 @@ body{
 
 </section>
 
-<!-- === paste this directly AFTER the hero </section> and BEFORE your <script> === -->
 <section class="profile">
+
+<canvas id="profileParticles"></canvas>
 
 <video id="profileVideo" class="profile-video" poster="Screenshot_2026-03-07-20-44-52-001.jpeg">
     <source src="VN20260307_225515.mp4" type="video/mp4">
@@ -360,6 +375,65 @@ function animateSparkles(){
     requestAnimationFrame(animateSparkles);
 }
 animateSparkles();
+
+/* ---------- Profile Floating Sparkles (profileParticles) ---------- */
+const profileCanvas = document.getElementById("profileParticles");
+const profileCtx = profileCanvas.getContext("2d");
+const profileSection = document.querySelector(".profile");
+
+let profileSparkles = [];
+
+// helper to size profileCanvas to profile section
+function resizeProfileCanvas(){
+    // set canvas pixel size to profile element size (keeps sparkles fixed to section)
+    const rect = profileSection.getBoundingClientRect();
+    profileCanvas.width = Math.max(1, Math.floor(rect.width));
+    profileCanvas.height = Math.max(1, Math.floor(rect.height));
+}
+
+// (re)create particles after sizing so coordinates match
+function createProfileSparkles(count = 30){
+    profileSparkles = [];
+    for(let i=0;i<count;i++){
+        profileSparkles.push({
+            x: Math.random() * profileCanvas.width,
+            y: Math.random() * profileCanvas.height,
+            radius: Math.random() * 2,
+            speed: 0.2 + Math.random() * 0.6
+        });
+    }
+}
+
+// animation loop
+function animateProfileSparkles(){
+    if (!profileCanvas || !profileCtx) return;
+    profileCtx.clearRect(0,0,profileCanvas.width,profileCanvas.height);
+    profileCtx.fillStyle = "rgba(255,255,255,0.45)";
+
+    profileSparkles.forEach(s => {
+        profileCtx.beginPath();
+        profileCtx.arc(s.x, s.y, s.radius, 0, Math.PI*2);
+        profileCtx.fill();
+
+        s.y -= s.speed;
+        if (s.y < 0) s.y = profileCanvas.height + Math.random() * 20;
+    });
+
+    requestAnimationFrame(animateProfileSparkles);
+}
+
+// initialize sizes & particles (call once now)
+resizeProfileCanvas();
+createProfileSparkles(30); // 30 = slightly more subtle than hero's 40
+animateProfileSparkles();
+
+// keep profile canvas sized when the window or layout changes
+window.addEventListener('resize', () => {
+    // keep original resizeCanvas (you already have) but ALSO resize the profile canvas to match section
+    resizeProfileCanvas();
+    // re-create particles so they distribute correctly across the new size
+    createProfileSparkles(30);
+});
 
 /* ---------- Natural Romantic Petals ---------- */
 const petalCanvas=document.getElementById("petals");
