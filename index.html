@@ -161,6 +161,8 @@ body{
 
     box-shadow:0 0 15px #4682B4,
                0 0 30px rgba(70,130,180,0.7);
+    
+    transition: box-shadow 0.3s ease;
 
     cursor:pointer;
 
@@ -168,6 +170,11 @@ body{
 }
 
 .profile-video:hover{
+    box-shadow:0 0 25px #4682B4,
+               0 0 50px rgba(70,130,180,0.9);
+}
+
+.profile-video.touch-glow{
     box-shadow:0 0 25px #4682B4,
                0 0 50px rgba(70,130,180,0.9);
 }
@@ -679,6 +686,20 @@ profileVideo.addEventListener("ended", function(){
 
 showRandomComment();
 scheduleNextComment(); // starts the loop with default 3000ms for normal auto-appear
+
+/* ---------- Touch Hover Effect ---------- */
+
+const profileVid = document.getElementById("profileVideo");
+
+profileVid.addEventListener("touchstart", () => {
+    profileVid.classList.add("touch-glow");
+});
+
+profileVid.addEventListener("touchend", () => {
+    setTimeout(()=>{
+        profileVid.classList.remove("touch-glow");
+    },300);
+});
 
 </script>
 
