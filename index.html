@@ -261,6 +261,160 @@ body{
 
 }
 
+/* ---------- star buttons + panels (tablet-first) ---------- */
+
+.star-buttons{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  align-items:flex-start; /* stars on left, pills on right */
+  margin:10px 0 20px 30px; /* adjust placement inside profile */
+  z-index:3;
+}
+
+/* each row holds star + pill */
+.star-row{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* glass pill to the right of star */
+.glass-pill{
+  min-width:320px;            /* tablet baseline width */
+  max-width:56vw;
+  padding:12px 22px;
+  border-radius:14px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(6px) saturate(.9);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(70,130,180,0.18);
+  color: #fff;
+  font-size:20px;
+  text-align:center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  pointer-events:none; /* pill not clickable */
+}
+
+/* star button container */
+.star-btn{
+  display:inline-grid;
+  place-items:center;
+  width:56px;
+  height:56px;
+  border-radius:12px;
+  background:transparent;
+  border:none;
+  padding:0;
+  margin:0;
+  cursor:pointer;
+  position:relative;
+  z-index:4;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* main star white -> we tint via CSS stroke if needed */
+.star-main{ filter: drop-shadow(0 2px 6px rgba(70,130,180,0.55)); }
+
+/* tiny orbiting stars */
+.tiny-star{
+  position:absolute;
+  fill:#fff;
+  opacity:0.95;
+  transform-origin: center;
+}
+
+/* small offset positions (they orbit when .orbit class added) */
+.t1{ left:-6px; top:-10px; transform: translate(-6px,-6px); }
+.t2{ right:-6px; bottom:-8px; transform: translate(6px,6px); }
+
+/* spin animation for main star */
+.spin { animation: star-spin 480ms cubic-bezier(.2,1,.2,1) both; }
+@keyframes star-spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+
+/* orbit animation for tiny stars */
+.orbit.t1 { animation: orbit-1 900ms linear infinite; }
+.orbit.t2 { animation: orbit-2 900ms linear infinite; }
+@keyframes orbit-1 { 0% { transform: translate(-6px,-6px) rotate(0deg) } 100% { transform: translate(-6px,-6px) rotate(360deg) } }
+@keyframes orbit-2 { 0% { transform: translate(6px,6px) rotate(0deg) } 100% { transform: translate(6px,6px) rotate(-360deg) } }
+
+/* panels container */
+.panels{
+  margin-top:10px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  padding:0 30px 30px 30px;
+}
+
+/* panel collapsed -> max-height 0; open -> limit to 60vh */
+.info-panel{
+  width: calc(100% - 60px);
+  max-width:900px;
+  margin-left:56px; /* slide under pills (align with pills) */
+  overflow:hidden;
+  max-height:0;
+  transition: max-height 360ms ease, opacity 360ms ease, transform 360ms ease;
+  opacity:0;
+  transform: translateY(-6px);
+  border-radius:14px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  position:relative;
+  background-color: rgba(0,0,0,0.35); /* fallback if bg image missing */
+}
+
+/* when open */
+.info-panel.open{
+  max-height: 60vh;   /* tablet baseline */
+  opacity:1;
+  transform: translateY(0);
+}
+
+/* inner area that scrolls */
+.panel-inner{
+  position:relative;
+  padding:18px;
+  height:100%;
+  box-sizing:border-box;
+  background: linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.0));
+}
+
+/* scrollable content area */
+.panel-scroll{
+  max-height: calc(60vh - 86px); /* subtract heading + padding */
+  overflow-y:auto;
+  padding-right:8px;
+  color:#fff;
+  line-height:1.45;
+}
+
+/* panel heading */
+.info-panel h2{
+  margin:0 0 10px 0;
+  font-size:22px;
+  color:#fff;
+  text-align:left;
+}
+
+/* panel background image layer (no blur) */
+.info-panel::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:center;
+  z-index:0;
+  filter: grayscale(30%) brightness(85%); /* dulling */
+  opacity:0.9;
+}
+
+/* ensure text sits above bg layer */
+.info-panel .panel-inner{ position:relative; z-index:2; }
+
+/* set each panel's background via data-bg attribute (JS will copy into ::before) */
+
 </style>
 </head>
 
@@ -293,6 +447,88 @@ body{
 <section class="profile">
 
 <canvas id="profileParticles"></canvas>
+
+<!-- START: tablet-first star buttons + panels (paste inside .profile, above profileVideo) -->
+<div class="star-buttons">
+  <div class="star-row" data-panel="panel-about">
+    <button class="star-btn" aria-expanded="false" aria-controls="panel-about" title="Open About Me">
+      <!-- main star SVG -->
+      <svg class="star-main" viewBox="0 0 100 100" width="46" height="46" aria-hidden="true">
+        <path fill="#fff" d="M50 0 L62 38 L100 50 L62 62 L50 100 L38 62 L0 50 L38 38 Z"/>
+      </svg>
+      <!-- tiny orbiting stars -->
+      <svg class="tiny-star t1" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+        <path fill="#fff" d="M12 0 L14 8 L22 12 L14 16 L12 24 L10 16 L2 12 L10 8 Z"/>
+      </svg>
+      <svg class="tiny-star t2" viewBox="0 0 24 24" width="10" height="10" aria-hidden="true">
+        <path fill="#fff" d="M12 0 L14 8 L22 12 L14 16 L12 24 L10 16 L2 12 L10 8 Z"/>
+      </svg>
+    </button>
+    <div class="glass-pill">About Me</div>
+  </div>
+
+  <div class="star-row" data-panel="panel-desc">
+    <button class="star-btn" aria-expanded="false" aria-controls="panel-desc" title="Open Description">
+      <svg class="star-main" viewBox="0 0 100 100" width="46" height="46" aria-hidden="true">
+        <path fill="#fff" d="M50 0 L62 38 L100 50 L62 62 L50 100 L38 62 L0 50 L38 38 Z"/>
+      </svg>
+      <svg class="tiny-star t1" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+        <path fill="#fff" d="M12 0 L14 8 L22 12 L14 16 L12 24 L10 16 L2 12 L10 8 Z"/>
+      </svg>
+      <svg class="tiny-star t2" viewBox="0 0 24 24" width="10" height="10" aria-hidden="true">
+        <path fill="#fff" d="M12 0 L14 8 L22 12 L14 16 L12 24 L10 16 L2 12 L10 8 Z"/>
+      </svg>
+    </button>
+    <div class="glass-pill">Description</div>
+  </div>
+
+  <div class="star-row" data-panel="panel-anim">
+    <button class="star-btn" aria-expanded="false" aria-controls="panel-anim" title="Open Animation">
+      <svg class="star-main" viewBox="0 0 100 100" width="46" height="46" aria-hidden="true">
+        <path fill="#fff" d="M50 0 L62 38 L100 50 L62 62 L50 100 L38 62 L0 50 L38 38 Z"/>
+      </svg>
+      <svg class="tiny-star t1" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+        <path fill="#fff" d="M12 0 L14 8 L22 12 L14 16 L12 24 L10 16 L2 12 L10 8 Z"/>
+      </svg>
+      <svg class="tiny-star t2" viewBox="0 0 24 24" width="10" height="10" aria-hidden="true">
+        <path fill="#fff" d="M12 0 L14 8 L22 12 L14 16 L12 24 L10 16 L2 12 L10 8 Z"/>
+      </svg>
+    </button>
+    <div class="glass-pill">Animation</div>
+  </div>
+</div>
+
+<!-- panels (place after the buttons) -->
+<div class="panels">
+  <div id="panel-about" class="info-panel" data-bg="url('2026-03-09_12-12-57_0.jpg')">
+    <div class="panel-inner">
+      <h2>About Me</h2>
+      <div class="panel-scroll">
+        <!-- Add long text here; it will scroll inside this box -->
+        <p>I am Ananya... (paste your about text)</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-desc" class="info-panel" data-bg="url('2026-03-09_12-12-57_0.jpg')">
+    <div class="panel-inner">
+      <h2>Description</h2>
+      <div class="panel-scroll">
+        <p>Put description content here...</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-anim" class="info-panel" data-bg="url('2026-03-09_12-12-57_0.jpg')">
+    <div class="panel-inner">
+      <h2>Animation</h2>
+      <div class="panel-scroll">
+        <p>Animation notes / examples ...</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END: star buttons + panels -->
 
 <video id="profileVideo" class="profile-video" poster="Screenshot_2026-03-07-20-44-52-001.jpeg">
     <source src="VN20260307_225515.mp4" type="video/mp4">
@@ -848,6 +1084,134 @@ profileVid.addEventListener("touchend", () => {
         profileVid.classList.remove("touch-glow");
     },300);
 });
+
+</script>
+
+<script>
+
+// ---------- Star buttons -> panels behavior ----------
+(function(){
+  const ROWS = document.querySelectorAll('.star-row');
+
+  function closeAllPanels() {
+    document.querySelectorAll('.info-panel.open').forEach(p=>{
+      p.classList.remove('open');
+      const btn = document.querySelector(`.star-row[data-panel="${p.id}"] .star-btn`);
+      if(btn) btn.setAttribute('aria-expanded','false');
+    });
+  }
+
+  ROWS.forEach(row=>{
+    const btn = row.querySelector('.star-btn');
+    const t1 = btn.querySelector('.t1');
+    const t2 = btn.querySelector('.t2');
+    const mainStar = btn.querySelector('.star-main');
+    const targetId = row.dataset.panel;
+    const panel = document.getElementById(targetId);
+
+    // set panel background from data-bg attribute
+    const bg = panel.dataset.bg || '';
+    if(bg){
+      panel.style.setProperty('--panel-bg', bg);
+      // copy into pseudo-element by injecting an inline style rule:
+      panel.style.setProperty('--panel-background', bg);
+      panel.style.backgroundImage = 'none'; // keep fallback
+      // we will set ::before via inline style injection (supported by browsers) —
+      // simpler approach: set background on pseudo via element style using a CSS variable
+      panel.style.setProperty('--bg-url', bg);
+      panel.style.setProperty('--bg-filter', 'grayscale(30%) brightness(85%)');
+      // but simpler for compatibility: directly set background on panel::before is not possible via JS,
+      // so we set the element's style backgroundImage and lower opacity so it matches visual intent:
+      panel.style.backgroundImage = bg.replace(/^url\(|\)$/g, '');
+      // fallback: if `data-bg="url('x.jpg')"` then the above strips the url(). So do this:
+      const urlmatch = panel.dataset.bg.match(/url\((['"]?)(.+?)\1\)/);
+      if(urlmatch){
+        panel.style.backgroundImage = `url("${urlmatch[2]}")`;
+        panel.style.filter = 'none';
+      }
+    }
+
+    const spinDuration = 480; // ms (matches CSS)
+
+    function togglePanel() {
+      const isOpen = panel.classList.contains('open');
+
+      if(isOpen){
+        // close
+        panel.classList.remove('open');
+        btn.setAttribute('aria-expanded','false');
+        // play a quick spin-back for fun
+        mainStar.classList.add('spin');
+        setTimeout(()=> mainStar.classList.remove('spin'), spinDuration);
+        t1.classList.remove('orbit');
+        t2.classList.remove('orbit');
+        return;
+      }
+
+      // open: first spin then open panel
+      mainStar.classList.add('spin');
+      t1.classList.add('orbit');
+      t2.classList.add('orbit');
+
+      // close other panels
+      closeAllPanels();
+
+      setTimeout(()=>{
+        panel.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+        // stop spin but keep orbit while open
+        mainStar.classList.remove('spin');
+      }, spinDuration);
+    }
+
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      togglePanel();
+    });
+
+    // close when clicking outside any panel
+    document.addEventListener('click', (ev)=>{
+      if(!row.contains(ev.target) && !panel.contains(ev.target)){
+        // if clicked outside all star-rows and panel -> close this panel
+        if(panel.classList.contains('open')){
+          panel.classList.remove('open');
+          btn.setAttribute('aria-expanded','false');
+          t1.classList.remove('orbit');
+          t2.classList.remove('orbit');
+        }
+      }
+    });
+
+    // keyboard: Esc closes
+    document.addEventListener('keydown', (ev)=>{
+      if(ev.key === 'Escape'){
+        if(panel.classList.contains('open')){
+          panel.classList.remove('open');
+          btn.setAttribute('aria-expanded','false');
+          t1.classList.remove('orbit');
+          t2.classList.remove('orbit');
+        }
+      }
+    });
+
+    // touch: simple swipe-down to close for that panel
+    let startY = null;
+    panel.addEventListener('touchstart', (e)=>{
+      startY = e.touches[0].clientY;
+    }, {passive:true});
+    panel.addEventListener('touchend', (e)=>{
+      if(startY === null) return;
+      const endY = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY : null;
+      if(endY && (endY - startY) > 80){ // swipe down
+        panel.classList.remove('open');
+        btn.setAttribute('aria-expanded','false');
+        t1.classList.remove('orbit');
+        t2.classList.remove('orbit');
+      }
+      startY = null;
+    });
+  });
+})();
 
 </script>
 
