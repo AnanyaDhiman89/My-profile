@@ -5,6 +5,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
 <style>
 /* ---------------- base ---------------- */
 body{
@@ -392,9 +394,12 @@ body{
 /* panel heading */
 .info-panel h2{
   margin:0 0 10px 0;
-  font-size:22px;
+  font-size:26px;
   color:#fff;
-  text-align:left;
+  text-align:center;
+  font-family:'Playfair Display', serif;
+  font-weight:600;
+  letter-spacing:1px;
 }
 
 /* panel background image layer (no blur) */
@@ -487,6 +492,23 @@ body{
 
 .panel-scroll{
   max-height:calc(75vh - 90px);
+}
+
+/* -------- MOBILE / TABLET PANEL POSITION FIX -------- */
+
+@media (max-width:1024px){
+
+.panels{
+  margin-top:420px;
+  align-items:center;
+}
+
+.info-panel{
+  width:90%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
 }
 
 </style>
