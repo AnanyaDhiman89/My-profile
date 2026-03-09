@@ -351,7 +351,7 @@ body{
 .info-panel{
   width: calc(100% - 60px);
   max-width:900px;
-  margin-left:56px; /* slide under pills (align with pills) */
+  margin-left:auto; /* slide under pills (align with pills) */
   overflow:hidden;
   max-height:0;
   transition: max-height 360ms ease, opacity 360ms ease, transform 360ms ease;
@@ -445,6 +445,48 @@ body{
 .t2{
   right:-3px;
   bottom:-5px;
+}
+
+/* ------------------ POSITION IMPROVEMENTS ------------------ */
+
+/* Desktop: move stars a little downward */
+
+@media (min-width:1025px){
+
+.star-buttons{
+  margin-top:120px;
+}
+
+}
+
+/* Tablet + Phone: move stars right side and down */
+
+@media (max-width:1024px){
+
+.star-buttons{
+  margin-top:140px;
+  margin-left:50%;
+  transform:translateX(10%);
+}
+
+}
+
+/* Panel center alignment fix */
+
+.info-panel{
+  margin-left:auto;
+  margin-right:auto;
+}
+
+
+/* Increase panel vertical size */
+
+.info-panel.open{
+  max-height:75vh;
+}
+
+.panel-scroll{
+  max-height:calc(75vh - 90px);
 }
 
 </style>
