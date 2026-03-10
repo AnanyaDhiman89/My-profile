@@ -440,22 +440,30 @@ body{
 
 /* Tablet + Phone: move stars right side and down */
 @media (max-width:1024px){
+
   .star-buttons{
     margin-top: 140px;
     margin-left: 50%;
     transform: translateX(10%);
   }
 
-  /* Panel position adjustments for smaller screens */
+  /* smaller glass pill for mobile/tablet */
+  .glass-pill{
+    min-width:260px;
+    max-width:70vw;
+    font-size:30px;
+    padding:10px 18px;
+  }
+
   .panels{
-    margin-top: 380px;
-    align-items: center;
+    margin-top:240px;
+    align-items:center;
   }
 
   .info-panel{
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
+    width:90%;
+    margin-left:auto;
+    margin-right:auto;
   }
 }
 
