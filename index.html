@@ -309,7 +309,6 @@ body{
 }
 
 /* ---------- STAR BUTTONS & TINY-STARS (updated) ---------- */
-
 /* star button container */
 .star-btn{
   display:inline-grid;
@@ -325,83 +324,82 @@ body{
   position:relative;
   z-index:4;
   -webkit-tap-highlight-color: transparent;
-  perspective: 700px; /* harmless if you keep it */
+
+  /* NEW: 3D perspective for horizontal flip */
+  perspective: 700px;
 }
 
-/* main star — revert to simple 2D rotate behaviour */
+/* main star white -> we tint via CSS stroke if needed */
 .star-main{
   filter: drop-shadow(0 2px 6px rgba(70,130,180,0.55));
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
   will-change: transform;
 }
 
-/* spin = 2D in-place rotation (old behavior you wanted back) */
-.spin {
-  animation: star-spin 480ms cubic-bezier(.2,1,.2,1) both;
-}
-@keyframes star-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-/* tiny stars base */
+/* TINY ORBITING STARS — repositioned to orbit center and made bigger */
 .tiny-star{
   position:absolute;
   top:50%;
   left:50%;
+  transform: translate(-50%,-50%); /* base centering at button center */
   transform-origin: center;
   opacity:0.98;
   fill:#fff;
   will-change: transform;
   pointer-events: none;
+  /* slightly higher z so they appear above the main star edges when orbiting */
   z-index:6;
 }
 
-/* size */
-.tiny-star { width:14px; height:14px; }
+/* sizes: larger and more visible on all breakpoints */
+.tiny-star[width="12"], .tiny-star[width="10"], .tiny-star { width:14px; height:14px; }
 
-/* --- initial (resting) positions: diagonally opposite like before --- */
-/* place them at a diagonal offset from center using rotate+translate technique */
-.t1 { --orbit-radius: 26px; 
-      /* start at top-left (angle -135deg) */
-      transform: translate(-50%,-50%) rotate(-135deg) translateX(var(--orbit-radius)) rotate(135deg);
+/* initial offsets — they start slightly offset from center (so orbit radius is natural) */
+.t1 { /* top-left-ish starting position */
+  --orbit-radius: 26px; /* smaller radius = closer to main star */
+  transform: translate(-50%,-50%) rotate(0deg) translateX(calc(-1 * var(--orbit-radius))) rotate(0deg);
 }
-.t2 { --orbit-radius: 26px; 
-      /* start at bottom-right (angle 45deg) */
-      transform: translate(-50%,-50%) rotate(45deg) translateX(var(--orbit-radius)) rotate(-45deg);
+.t2 { /* bottom-right-ish starting position */
+  --orbit-radius: 30px; /* slightly different radius for visual variety */
+  transform: translate(-50%,-50%) rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg);
 }
 
-/* ---------- orbit around main star (animation rotates the rotate() angle) ---------- */
+/* ---------- 3D horizontal "flip" for the main star ---------- */
+/* use rotateY to spin horizontally (like turning left-right) */
+.spin {
+  animation: star-flip 480ms cubic-bezier(.2,1,.2,1) both;
+}
+@keyframes star-flip {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(360deg); }
+}
+
+/* ---------- Orbit animation for tiny stars (orbit around main star) ---------- */
+/* each tiny-star uses a compound transform: 
+   translate(center) rotate(angle) translateX(radius) rotate(-angle)
+   — this makes them orbit while keeping their upright orientation */
 .orbit.t1 { animation: tiny-orbit-1 1600ms linear infinite; }
 .orbit.t2 { animation: tiny-orbit-2 1800ms linear infinite; }
 
 @keyframes tiny-orbit-1 {
-  /* start at -135deg, end at -135 + 360 = 225deg */
-  0%   { transform: translate(-50%,-50%) rotate(-135deg) translateX(var(--orbit-radius)) rotate(135deg); }
-  100% { transform: translate(-50%,-50%) rotate(225deg)  translateX(var(--orbit-radius)) rotate(-225deg); }
+  0%   { transform: translate(-50%,-50%) rotate(0deg) translateX(calc(-1 * var(--orbit-radius))) rotate(0deg); }
+  50%  { transform: translate(-50%,-50%) rotate(180deg) translateX(calc(-1 * var(--orbit-radius))) rotate(-180deg); }
+  100% { transform: translate(-50%,-50%) rotate(360deg) translateX(calc(-1 * var(--orbit-radius))) rotate(-360deg); }
 }
 @keyframes tiny-orbit-2 {
-  /* start at 45deg, end at 45 + 360 = 405deg */
-  0%   { transform: translate(-50%,-50%) rotate(45deg) translateX(var(--orbit-radius)) rotate(-45deg); }
-  100% { transform: translate(-50%,-50%) rotate(405deg) translateX(var(--orbit-radius)) rotate(-405deg); }
+  0%   { transform: translate(-50%,-50%) rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg); }
+  50%  { transform: translate(-50%,-50%) rotate(-180deg) translateX(var(--orbit-radius)) rotate(180deg); }
+  100% { transform: translate(-50%,-50%) rotate(-360deg) translateX(var(--orbit-radius)) rotate(360deg); }
 }
 
-/* ---------- self-rotation of tiny star shapes (the 'day' spin while orbiting) ---------- */
-/* run only while orbiting so they sit still when not active */
-.tiny-star.orbit path{
-  transform-origin: 50% 50%;
-  animation: tiny-self-rotate 700ms linear infinite;
-}
-@keyframes tiny-self-rotate {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-/* subtle glow polish */
+/* small visual polish: make tiny stars glow just a bit (optional) */
 .tiny-star path{ filter: drop-shadow(0 1px 6px rgba(0,200,255,0.12)); }
 
-/* mobile tweak for visibility */
+/* ---------- keep mobile/desktop media rules as before but if you want even bigger tiny-stars on mobile add: */
 @media (max-width:1024px){
-  .tiny-star{ width:18px; height:18px; --orbit-radius: 34px; }
+  .tiny-star{ width:18px; height:18px; --orbit-radius: 34px; } /* slightly bigger orbit on mobile */
+  .glass-pill{ font-size:43px; padding:10px 18px; }
 }
 
 /* panels container */
