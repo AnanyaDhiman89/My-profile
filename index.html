@@ -469,11 +469,15 @@ body{
   content:"";
   position:absolute;
   inset:0;
+
+  background-image: var(--panel-bg);   /* THIS LINE FIXES IT */
+
   background-repeat:no-repeat;
   background-size:cover;
   background-position:center;
   z-index:0;
-  filter: grayscale(30%) brightness(85%); /* dulling */
+
+  filter: grayscale(30%) brightness(75%) contrast(110%);
   opacity:0.9;
 }
 
@@ -1227,6 +1231,10 @@ profileVid.addEventListener("touchend", () => {
 
     const spinDuration = 480;
 
+    const bg = panel.dataset.bg;
+    if(bg){
+      panel.style.setProperty('--panel-bg', bg);
+    }
 
     function togglePanel(){
 
