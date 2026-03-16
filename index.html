@@ -1195,64 +1195,83 @@ profileVid.addEventListener("touchend", () => {
 
 // ---------- Star buttons -> panels behavior ----------
 (function(){
+
   const ROWS = document.querySelectorAll('.star-row');
 
   function closeAllPanels() {
-  // close panels (as before)
-  document.querySelectorAll('.info-panel.open').forEach(p=>{
-    p.classList.remove('open');
-    const btn = document.querySelector(`.star-row[data-panel="${p.id}"] .star-btn`);
-    if(btn) btn.setAttribute('aria-expanded','false');
-  });
+    // close panels
+    document.querySelectorAll('.info-panel.open').forEach(p=>{
+      p.classList.remove('open');
+      const btn = document.querySelector(`.star-row[data-panel="${p.id}"] .star-btn`);
+      if(btn) btn.setAttribute('aria-expanded','false');
+    });
 
-  // STOP spinning/orbiting for all star buttons
-  document.querySelectorAll('.star-btn .star-main.spin').forEach(s => s.classList.remove('spin'));
-  document.querySelectorAll('.star-btn .tiny-star.orbit').forEach(t => t.classList.remove('orbit'));
-}
+    // stop animations everywhere
+    document.querySelectorAll('.star-btn .star-main.spin')
+      .forEach(s => s.classList.remove('spin'));
 
-// ... inside the ROWS.forEach(row => { ... }) block, replace togglePanel with this:
-function togglePanel() {
-  const isOpen = panel.classList.contains('open');
-
-  if(isOpen){
-    // close
-    panel.classList.remove('open');
-    btn.setAttribute('aria-expanded','false');
-    // quick horizontal spin-back for fun (same animation)
-    mainStar.classList.add('spin');
-    setTimeout(()=> mainStar.classList.remove('spin'), spinDuration);
-    t1.classList.remove('orbit');
-    t2.classList.remove('orbit');
-    return;
+    document.querySelectorAll('.star-btn .tiny-star.orbit')
+      .forEach(t => t.classList.remove('orbit'));
   }
 
-  // OPEN: first close everything else, then add the animation classes
-  closeAllPanels();
+  ROWS.forEach(row=>{
 
-  // now mark this one as spinning / orbiting
-  mainStar.classList.add('spin');
+    const btn = row.querySelector('.star-btn');
+    const t1 = btn.querySelector('.t1');
+    const t2 = btn.querySelector('.t2');
+    const mainStar = btn.querySelector('.star-main');
 
-  // tiny-stars start orbiting *around* the main star
-  t1.classList.add('orbit');
-  t2.classList.add('orbit');
+    const targetId = row.dataset.panel;
+    const panel = document.getElementById(targetId);
 
-  // after the spin animation completes, open panel and stop main spin (tiny-stars keep orbiting)
-  setTimeout(()=>{
-    panel.classList.add('open');
-    btn.setAttribute('aria-expanded','true');
-    mainStar.classList.remove('spin');
-  }, spinDuration);
+    const spinDuration = 480;
+
+
+    function togglePanel(){
+
+      const isOpen = panel.classList.contains('open');
+
+      if(isOpen){
+        panel.classList.remove('open');
+        btn.setAttribute('aria-expanded','false');
+
+        mainStar.classList.add('spin');
+
+        setTimeout(()=>{
+          mainStar.classList.remove('spin');
+        }, spinDuration);
+
+        t1.classList.remove('orbit');
+        t2.classList.remove('orbit');
+
+        return;
+      }
+
+      // close everything else
+      closeAllPanels();
+
+      // animate this button
+      mainStar.classList.add('spin');
+      t1.classList.add('orbit');
+      t2.classList.add('orbit');
+
+      setTimeout(()=>{
+        panel.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+        mainStar.classList.remove('spin');
+      }, spinDuration);
     }
-    
+
+
     btn.addEventListener('click', (e)=>{
       e.stopPropagation();
       togglePanel();
     });
 
-    // close when clicking outside any panel
+
+    // click outside closes panel
     document.addEventListener('click', (ev)=>{
       if(!row.contains(ev.target) && !panel.contains(ev.target)){
-        // if clicked outside all star-rows and panel -> close this panel
         if(panel.classList.contains('open')){
           panel.classList.remove('open');
           btn.setAttribute('aria-expanded','false');
@@ -1262,7 +1281,8 @@ function togglePanel() {
       }
     });
 
-    // keyboard: Esc closes
+
+    // ESC closes
     document.addEventListener('keydown', (ev)=>{
       if(ev.key === 'Escape'){
         if(panel.classList.contains('open')){
@@ -1274,23 +1294,33 @@ function togglePanel() {
       }
     });
 
-    // touch: simple swipe-down to close for that panel
+
+    // swipe down closes (mobile)
     let startY = null;
+
     panel.addEventListener('touchstart', (e)=>{
       startY = e.touches[0].clientY;
     }, {passive:true});
+
     panel.addEventListener('touchend', (e)=>{
+
       if(startY === null) return;
-      const endY = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY : null;
-      if(endY && (endY - startY) > 80){ // swipe down
+
+      const endY = e.changedTouches[0].clientY;
+
+      if(endY - startY > 80){
         panel.classList.remove('open');
         btn.setAttribute('aria-expanded','false');
         t1.classList.remove('orbit');
         t2.classList.remove('orbit');
       }
+
       startY = null;
+
     });
+
   });
+
 })();
 
 </script>
