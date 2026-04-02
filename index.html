@@ -430,8 +430,8 @@ body{
 
 /* when open */
 .info-panel.open{
-  height: 360px;        /* fixed size */
-  max-height: 360px;    /* prevents expansion */
+  height: 330px;        /* fixed size */
+  max-height: 330px;    /* prevents expansion */
   opacity: 1;
   transform: translateY(0);
 }
@@ -455,10 +455,13 @@ body{
   overflow-y: auto;
 
   padding-right: 8px;
+  padding-bottom: 30px;  /* FIX HERE */
+
   color: #fff;
   line-height: 1.5;
 
   scroll-behavior: smooth;
+  overscroll-behavior: contain;
 }
 
 /* Custom scrollbar */
@@ -1345,18 +1348,6 @@ profileVid.addEventListener("touchend", () => {
     }, {passive:true});
 
     panel.addEventListener('touchend', (e)=>{
-
-      if(startY === null) return;
-
-      const endY = e.changedTouches[0].clientY;
-
-      if(endY - startY > 80){
-        panel.classList.remove('open');
-        btn.setAttribute('aria-expanded','false');
-        t1.classList.remove('orbit');
-        t2.classList.remove('orbit');
-      }
-
       startY = null;
 
     });
