@@ -430,8 +430,8 @@ body{
 
 /* when open */
 .info-panel.open{
-  height: 420px;        /* fixed size */
-  max-height: 420px;    /* prevents expansion */
+  height: 360px;        /* fixed size */
+  max-height: 360px;    /* prevents expansion */
   opacity: 1;
   transform: translateY(0);
 }
@@ -1322,7 +1322,10 @@ profileVid.addEventListener("touchend", () => {
 
     // click outside closes panel
     document.addEventListener('click', (ev)=>{
-      if(!row.contains(ev.target) && !panel.contains(ev.target)){
+      const clickedInsidePanel = panel.contains(ev.target);
+      const clickedButton = btn.contains(ev.target);
+
+      if(!clickedInsidePanel && !clickedButton){
         if(panel.classList.contains('open')){
           panel.classList.remove('open');
           btn.setAttribute('aria-expanded','false');
@@ -1348,6 +1351,11 @@ profileVid.addEventListener("touchend", () => {
 
     // swipe down closes (mobile)
     let startY = null;
+
+// prevent accidental outside click when interacting inside panel
+    panel.addEventListener('click', (e)=>{
+      e.stopPropagation();
+    });
 
     panel.addEventListener('touchstart', (e)=>{
       startY = e.touches[0].clientY;
