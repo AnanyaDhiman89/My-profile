@@ -1319,23 +1319,6 @@ profileVid.addEventListener("touchend", () => {
       togglePanel();
     });
 
-
-    // click outside closes panel
-    document.addEventListener('click', (ev)=>{
-      const clickedInsidePanel = panel.contains(ev.target);
-      const clickedButton = btn.contains(ev.target);
-
-      if(!clickedInsidePanel && !clickedButton){
-        if(panel.classList.contains('open')){
-          panel.classList.remove('open');
-          btn.setAttribute('aria-expanded','false');
-          t1.classList.remove('orbit');
-          t2.classList.remove('orbit');
-        }
-      }
-    });
-
-
     // ESC closes
     document.addEventListener('keydown', (ev)=>{
       if(ev.key === 'Escape'){
