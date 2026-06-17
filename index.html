@@ -560,6 +560,32 @@ body{
   }
 }
 
+/* Moon */
+#moon {
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 180px;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    animation: moonFloat 6s ease-in-out infinite;
+    filter: drop-shadow(0 0 25px rgba(255,255,255,0.8));
+      }
+
+@keyframes moonFloat {
+    0% {
+        transform: translate(-50%, -50%) translateY(0px);
+    }
+    50% {
+        transform: translate(-50%, -50%) translateY(20px);
+    }
+    100% {
+        transform: translate(-50%, -50%) translateY(0px);
+    }
+
+}
+
 </style>
 </head>
 
@@ -698,6 +724,8 @@ Thanks for visiting my little art piece~ 🎀</p>
 <video id="profileVideo" class="profile-video" poster="Screenshot_2026-03-07-20-44-52-001.jpeg">
     <source src="VN20260307_225515.mp4" type="video/mp4">
 </video>
+
+<img id="moon" src="images/Screenshot_2026-06-17-21-54-23-709-removebg-preview.png">
 
 </section>
 
