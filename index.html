@@ -561,37 +561,26 @@ body{
 }
 
 /* Moon */
-#moon {
-
+#moon-area{
     position:absolute;
-
     top:58%;
     left:50%;
-
-    width:180px;
-
-    transform:translate(-50%, -50%);
-
-    z-index:10;
-
-    cursor:pointer;
-
-    filter:
-    drop-shadow(0 0 25px rgba(255,255,255,0.8));
-
-    animation: moonFloat 6s ease-in-out infinite;
-
+    transform:translate(-50%,-50%);
+    width:280px;
+    height:280px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-
-/* soft circular glow */
-
-#moon::after{
-    content:"";
-    position:absolute;
-
+#moon{
+    width:180px;
+    z-index:10;
+    cursor:pointer;
+    filter:
+    drop-shadow(0 0 25px rgba(255,255,255,0.8));
+    animation: moonFloat 6s ease-in-out infinite;
     }
-
 @keyframes moonFloat {
     0% {
         transform: translate(-50%, -50%) translateY(0px);
@@ -602,21 +591,21 @@ body{
     100% {
         transform: translate(-50%, -50%) translateY(0px);
     }
-
 }
 
 #moon:hover,
 #moon.active{
-
     filter:
     drop-shadow(0 0 45px rgba(255,255,255,1))
     drop-shadow(0 0 80px rgba(255,220,120,0.7));
+    transform:scale(1.08);
+}
 
-    transform:
-    translate(-50%, -50%)
-    scale(1.08);
-
-    }
+#moon-area:has(#moon:hover) #moon-glow,
+#moon-area:has(#moon.active) #moon-glow{
+    opacity:1;
+    transform:scale(1.15);
+}
 
 #moon-glow{
     position:absolute;
@@ -627,14 +616,14 @@ body{
     radial-gradient(
     circle,
     rgba(255,255,255,0.35),
-    rgba(255,220,120,0.15),
+    rgba(255,220,120,0.18),
     transparent 70%
     );
-    pointer-events:none;
+
     opacity:0;
-    transform:translate(-50%,-50%);
+    pointer-events:none;
     transition:0.5s;
-    }
+}
 
 .spark{
 position:absolute;
