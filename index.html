@@ -669,10 +669,10 @@ transform:scale(1.2);
 }
 }
 
-/* ------ Moon ------ */
+/* ------ Moon & Sun ------ */
 #moon-area{
 position:absolute;
-top:1.5%;
+top:-1%;
 right:7%;
 width:280px;
 height:280px;
@@ -702,6 +702,7 @@ transform:scale(.7);
 filter:
 drop-shadow(0 0 30px gold);
 pointer-events:none;
+animation:moonFloat 6s infinite ease-in-out;
 }
 
 #moon-area.is-day #moon{
@@ -1731,22 +1732,16 @@ function swapWorld() {
     }, 1450);
 }
 
+let celestialTapCount = 0;
+let celestialTapTimer = null;
+
 function clickCelestial(e){
 
     if(locked)return;
 
-    const rect = moonArea.getBoundingClientRect();
-
-    createGoldenBurst(
-        rect.left + rect.width/2,
-        rect.top + rect.height/2
-    );
-
     clicks++;
 
     const obj = isDay ? sun : moon;
-
-    burst();
 
     obj.classList.add("active");
 
@@ -1754,19 +1749,36 @@ function clickCelestial(e){
 
     clickResetTimer = setTimeout(() => {
         clicks = 0;
-    },350);
+    },900); // longer window for the 4-tap swap
 
     setTimeout(() => {
         obj.classList.remove("active");
     },700);
 
+    /* ---- double-click = golden sparkle burst ---- */
+    celestialTapCount++;
+
+    if(celestialTapCount === 1){
+        celestialTapTimer = setTimeout(() => {
+            celestialTapCount = 0;
+        }, 300);
+    } else if(celestialTapCount === 2){
+        clearTimeout(celestialTapTimer);
+        celestialTapCount = 0;
+
+        const rect = moonArea.getBoundingClientRect();
+        createGoldenBurst(
+            rect.left + rect.width/2,
+            rect.top + rect.height/2
+        );
+    }
 
     if(clicks === 4){
         clicks = 0;
         clearTimeout(clickResetTimer);
         swapWorld();
     }
-}
+    }
 
 
 moon.addEventListener("click", clickCelestial);
