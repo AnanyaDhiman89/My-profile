@@ -104,7 +104,7 @@ body{
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;            /* below .profile-video (which has z-index:2) */
+    z-index: 2;            /* below .profile-video (which has z-index:2) */
     pointer-events: none;
 }
 
@@ -160,6 +160,7 @@ body{
 .profile::before{
     content:"";
     position:absolute;
+    z-index:0;
     top:0;
     left:0;
     width:100%;
@@ -196,7 +197,7 @@ body{
 
     cursor:pointer;
 
-    z-index:2;
+    z-index:5;
 }
 
 /* --------- Hover glow effect --------- */
@@ -410,6 +411,8 @@ body{
   flex-direction:column;
   gap:12px;
   padding:0 30px 30px 30px;
+  position: relative;
+  z-index:4;
 }
 
 /* panel collapsed -> max-height 0; open -> limit to 60vh */
@@ -580,21 +583,28 @@ background-position:center;
 }
 
 #bg-next-layer{
-z-index:0;
 background-size:cover;
 background-position:center;
 transform:translateX(-100%);
 opacity:0;
+position:absolute;
+inset:0;
+pointer-events:none;
+z-index:0;
+background-repeat:no-repeat;
 }
 
 #bg-flash{
-z-index:1;
 background:
 radial-gradient(
 circle,
 white 0%,
 rgba(255,255,255,.8) 35%,
 transparent 75%
+position:absolute;
+inset:0;
+pointer-events:none;
+z-index:1;
 );
 
 opacity:0;
@@ -1648,111 +1658,100 @@ const moonArea = document.getElementById("moon-area");
 const moon = document.getElementById("moon");
 const sun = document.getElementById("sun");
 
-const bgCurrent =
-document.getElementById("bg-current-layer");
+const bgCurrent = document.getElementById("bg-current-layer");
+const bgNext = document.getElementById("bg-next-layer");
 
-const bgNext =
-document.getElementById("bg-next-layer");
-
-
-const nightBg =
-"url('2026-03-07_20-17-54_1.jpg')";
-
-const dayBg =
-"url('2026-04-07_16-55-56_1.png')";
-
+const nightBg = "url('2026-03-07_20-17-54_1.jpg')";
+const dayBg = "url('2026-04-07_16-55-56_1.png')";
 
 bgCurrent.style.backgroundImage = nightBg;
 profile.style.backgroundImage = nightBg;
 
+let isDay = false;
+let clicks = 0;
+let locked = false;
+let clickResetTimer = null;
 
-let isDay=false;
-let clicks=0;
-let locked=false;
+function burst() {
+    for (let i = 0; i < 18; i++) {
+        const spark = document.createElement("span");
+        spark.className = "spark";
 
+        spark.style.left = "50%";
+        spark.style.top = "50%";
 
-function swapWorld(){
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 70 + Math.random() * 100;
 
-if(locked) return;
+        spark.style.setProperty("--x", Math.cos(angle) * distance + "px");
+        spark.style.setProperty("--y", Math.sin(angle) * distance + "px");
 
-locked=true;
+        moonArea.appendChild(spark);
 
-profile.classList.add("swapping");
-
-moonArea.classList.add(
-isDay ? "swap-night" : "swap-day"
-);
-
-
-const next = isDay ? nightBg : dayBg;
-
-bgNext.style.backgroundImage=next;
-
-
-setTimeout(()=>{
-
-bgCurrent.style.backgroundImage=next;
-profile.style.backgroundImage=next;
-
-bgCurrent.style.transform="translateX(0)";
-
-bgNext.style.transform="translateX(-100)";
-
-profile.classList.remove("swapping");
-
-moonArea.classList.remove(
-"swap-day",
-"swap-night"
-);
-
-
-isDay=!isDay;
-
-moonArea.classList.toggle(
-"is-day",
-isDay
-);
-
-
-locked=false;
-
-},1400);
-
+        setTimeout(() => {
+            spark.remove();
+        }, 1200);
+    }
 }
 
+function swapWorld() {
+    if (locked) return;
 
-function clickCelestial(){
+    locked = true;
+    profile.classList.add("swapping");
+    moonArea.classList.add(isDay ? "swap-night" : "swap-day");
 
-if(locked)return;
+    const next = isDay ? nightBg : dayBg;
+    bgNext.style.backgroundImage = next;
 
-clicks++;
+    setTimeout(() => {
+        bgCurrent.style.backgroundImage = next;
+        profile.style.backgroundImage = next;
 
-const obj=isDay ? sun : moon;
+        bgCurrent.style.transform = "translateX(0)";
+        bgCurrent.style.opacity = "1";
 
-obj.classList.add("active");
+        bgNext.style.transform = "translateX(-100%)";
+        bgNext.style.opacity = "0";
 
+        profile.classList.remove("swapping");
+        moonArea.classList.remove("swap-day", "swap-night");
 
-setTimeout(()=>{
-obj.classList.remove("active");
-},700);
+        isDay = !isDay;
+        moonArea.classList.toggle("is-day", isDay);
 
-
-if(clicks===4){
-clicks=0;
-swapWorld();
+        locked = false;
+    }, 1450);
 }
+
+function clickCelestial() {
+    if (locked) return;
+
+    const obj = isDay ? sun : moon;
+
+    burst();
+    obj.classList.add("active");
+
+    clearTimeout(clickResetTimer);
+    clickResetTimer = setTimeout(() => {
+        clicks = 0;
+    }, 350);
+
+    clicks++;
+
+    setTimeout(() => {
+        obj.classList.remove("active");
+    }, 700);
+
+    if (clicks === 4) {
+        clicks = 0;
+        clearTimeout(clickResetTimer);
+        swapWorld();
+    }
 }
 
-moon.addEventListener(
-"click",
-clickCelestial
-);
-
-sun.addEventListener(
-"click",
-clickCelestial
-);
-
+moon.addEventListener("click", clickCelestial);
+sun.addEventListener("click", clickCelestial);
 </script>
 
 </body>
