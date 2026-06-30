@@ -1074,6 +1074,7 @@ const profileCtx = profileCanvas.getContext("2d");
 const profileSection = document.querySelector(".profile");
 
 let profileSparkles = [];
+let profileBurstParticles = [];
 
 // helper to size profileCanvas to profile section
 function resizeProfileCanvas(){
@@ -1096,6 +1097,20 @@ function createProfileSparkles(count = 30){
     }
 }
 
+/// golden burst that draws on the PROFILE canvas (correct section + coordinates)
+function createProfileGoldenBurst(x, y){
+    for(let i=0; i<80; i++){
+        profileBurstParticles.push({
+            x: x,
+            y: y,
+            radius: 2 + Math.random()*5,
+            alpha: 1,
+            speedX: (Math.random()-0.5)*9,
+            speedY: (Math.random()-0.5)*9
+        });
+    }
+}
+
 // animation loop
 function animateProfileSparkles(){
     if (!profileCanvas || !profileCtx) return;
@@ -1111,8 +1126,33 @@ function animateProfileSparkles(){
         if (s.y < 0) s.y = profileCanvas.height + Math.random() * 20;
     });
 
+    for (let i = profileBurstParticles.length - 1; i >= 0; i--) {
+        let p = profileBurstParticles[i];
+
+        let gradient = profileCtx.createRadialGradient(
+            p.x, p.y, 0,
+            p.x, p.y, p.radius * 3
+        );
+
+        gradient.addColorStop(0, "rgba(255,215,0," + p.alpha + ")");
+        gradient.addColorStop(1, "rgba(255,215,0,0)");
+
+        profileCtx.fillStyle = gradient;
+        profileCtx.beginPath();
+        profileCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        profileCtx.fill();
+
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.alpha -= 0.03;
+
+        if (p.alpha <= 0) {
+            profileBurstParticles.splice(i, 1);
+        }
+    }
+
     requestAnimationFrame(animateProfileSparkles);
-}
+    }
 
 // initialize sizes & particles (call once now)
 resizeProfileCanvas();
@@ -1766,10 +1806,12 @@ function clickCelestial(e){
         clearTimeout(celestialTapTimer);
         celestialTapCount = 0;
 
-        const rect = obj.getBoundingClientRect();
-        createGoldenBurst(
-            rect.left + rect.width/2,
-            rect.top + rect.height/2
+        const objRect = obj.getBoundingClientRect();
+        const profileRect = profile.getBoundingClientRect();
+
+        createProfileGoldenBurst(
+            (objRect.left + objRect.width/2) - profileRect.left,
+            (objRect.top + objRect.height/2) - profileRect.top
         );
     }
 
