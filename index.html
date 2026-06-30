@@ -1761,12 +1761,12 @@ function clickCelestial(e){
     if(celestialTapCount === 1){
         celestialTapTimer = setTimeout(() => {
             celestialTapCount = 0;
-        }, 300);
-    } else if(celestialTapCount === 2){
+        }, 350);
+    } else if(celestialTapCount >= 2){
         clearTimeout(celestialTapTimer);
         celestialTapCount = 0;
 
-        const rect = moonArea.getBoundingClientRect();
+        const rect = obj.getBoundingClientRect();
         createGoldenBurst(
             rect.left + rect.width/2,
             rect.top + rect.height/2
@@ -1781,8 +1781,11 @@ function clickCelestial(e){
     }
 
 
-moon.addEventListener("click", clickCelestial);
-sun.addEventListener("click", clickCelestial);
+moon.style.touchAction = "manipulation";
+sun.style.touchAction = "manipulation";
+
+moon.addEventListener("pointerdown", clickCelestial);
+sun.addEventListener("pointerdown", clickCelestial);
 </script>
 
 </body>
