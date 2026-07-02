@@ -340,7 +340,7 @@ body{
   perspective: 700px;
 }
 
-/* outer ambient glow only — unmasked, so the soft bloom around the bubble stays untouched */
+/* outer ambient glow only — unmasked, so the bloom is never clipped */
 .star-btn::before{
   content:"";
   position:absolute;
@@ -355,8 +355,8 @@ body{
   pointer-events:none;
 }
 
-/* the glass ring itself + two soft inner highlight arcs, masked so ONLY a
-   band near the rim shows colour — the center stays genuinely see-through */
+/* glass ring + inner highlight arcs — masked so ONLY a band near the
+   rim is painted; the center stays genuinely see-through */
 .star-btn::after{
   content:"";
   position:absolute;
