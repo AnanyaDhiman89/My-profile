@@ -296,27 +296,194 @@ body{
   justify-content: center;      /* keep star + pill centered */
 }
 
-/* glass pill to the right of star (consolidated) */
+/* glass pill to the right of star — dreamy glassmorphism panel.
+   NIGHT (default) = blue/purple/white. DAY (body.is-day) = gold/white. */
 .glass-pill{
+  position: relative;
   min-width: 320px;
   max-width: 56vw;
-  padding: 12px 22px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(6px) saturate(.9);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(70,130,180,0.18);
+  padding: 16px 42px 16px 26px;   /* extra right padding reserves room for the 3 stacked SVG decorations */
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 8% 15%, rgba(255,255,255,0.32), transparent 40%),
+    radial-gradient(circle at 94% 90%, rgba(150,120,255,0.22), transparent 45%),
+    linear-gradient(165deg, rgba(18,22,42,0.42), rgba(10,13,26,0.5));
+  backdrop-filter: blur(9px) saturate(1.3);
+  -webkit-backdrop-filter: blur(9px) saturate(1.3);
+  border: none;
 
   font-family: 'Cookie', cursive;
-  font-size: 36px;              /* increased size */
+  font-size: 36px;
   letter-spacing: 0.6px;
 
-  color: #00FFFF;               /* powder blue text */
-  text-shadow: 0 0 6px rgba(0,255,255,0.6);
+  color: #f3f6ff;
+  text-shadow:
+    0 0 6px rgba(255,255,255,0.55),
+    0 0 14px rgba(160,180,255,0.4);
 
-  text-align: center;           /* unified */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  text-align: center;
+  box-shadow:
+    0 4px 18px rgba(0,0,0,0.3),
+    0 0 24px rgba(140,120,255,0.16);
   pointer-events: none;
+}
+
+/* multi-shade glass ring — confined to a thin border-only band via the
+   content-box/border-box mask-composite trick, so it never fills the
+   whole panel behind the text */
+.glass-pill::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:18px;
+  padding:2px;
+  background: conic-gradient(from 200deg,
+    rgba(255,255,255,0.9) 0%,
+    rgba(205,217,255,0.6) 18%,
+    rgba(140,110,230,0.55) 36%,
+    rgba(255,255,255,0.35) 52%,
+    rgba(90,60,165,0.55) 68%,
+    rgba(168,138,255,0.7) 84%,
+    rgba(255,255,255,0.9) 100%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events:none;
+  z-index:1;
+}
+
+/* DAY override — golden-white glass + ring, scoped to body.is-day */
+body.is-day .glass-pill{
+  background:
+    radial-gradient(circle at 8% 15%, rgba(255,255,255,0.4), transparent 40%),
+    radial-gradient(circle at 94% 90%, rgba(255,205,120,0.28), transparent 45%),
+    linear-gradient(165deg, rgba(255,250,240,0.32), rgba(255,241,214,0.42));
+  color: #fffaf0;
+  -webkit-text-stroke: 0.5px rgba(178,132,54,0.45);
+  text-shadow:
+    0 0 6px rgba(255,255,255,0.7),
+    0 0 14px rgba(255,214,140,0.5);
+  box-shadow:
+    0 4px 18px rgba(0,0,0,0.15),
+    0 0 24px rgba(255,205,120,0.28);
+}
+
+body.is-day .glass-pill::before{
+  background: conic-gradient(from 200deg,
+    rgba(255,255,255,0.9) 0%,
+    rgba(255,238,204,0.6) 18%,
+    rgba(217,184,114,0.6) 36%,
+    rgba(255,255,255,0.4) 52%,
+    rgba(255,207,122,0.6) 68%,
+    rgba(255,244,214,0.7) 84%,
+    rgba(255,255,255,0.9) 100%);
+}
+
+/* ---------- pill decorations: sparkles + SVGs ---------- */
+
+.pill-sparkle{
+  position:absolute;
+  z-index:2;
+  pointer-events:none;
+  width:3px;
+  height:3px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:
+    0 0 4px 1px rgba(255,255,255,0.9),
+    0 0 8px 2px rgba(180,200,255,0.55);
+  animation: pill-sparkle-twinkle 2.4s ease-in-out infinite;
+}
+body.is-day .pill-sparkle{
+  box-shadow:
+    0 0 4px 1px rgba(255,255,255,0.9),
+    0 0 8px 2px rgba(255,225,160,0.6);
+}
+.pill-sparkle.p1{ top:22%; left:9%;  animation-delay:0s; }
+.pill-sparkle.p2{ top:66%; left:15%; width:2.5px; height:2.5px; animation-delay:0.7s; }
+.pill-sparkle.p3{ top:42%; left:5%;  width:2px;   height:2px;   animation-delay:1.3s; }
+
+@keyframes pill-sparkle-twinkle{
+  0%, 100% { opacity:0.25; transform:scale(0.7); }
+  50%      { opacity:1;    transform:scale(1.2); }
+}
+
+/* shared positioning for the 3 SVG decorations */
+.pill-deco{
+  position:absolute;
+  z-index:2;
+  pointer-events:none;
+}
+
+/* flower-svgrepo-com.svg — top right corner */
+.deco-flower-a{
+  top:8px;
+  right:8px;
+  width:20px;
+  height:20px;
+  filter:
+    drop-shadow(0 0 2px rgba(255,255,255,0.9))
+    drop-shadow(0 0 5px rgba(170,195,255,0.75))
+    drop-shadow(0 0 9px rgba(120,90,190,0.4));
+  animation: pill-deco-glow-pulse 3.4s ease-in-out infinite;
+}
+.deco-flower-a path{ stroke:#e8f0ff; fill:none; }
+
+/* flower1-svgrepo-com.svg — bottom right corner */
+.deco-flower-b{
+  bottom:8px;
+  right:10px;
+  width:16px;
+  height:16px;
+  filter:
+    drop-shadow(0 0 2px rgba(255,255,255,0.9))
+    drop-shadow(0 0 5px rgba(170,195,255,0.75))
+    drop-shadow(0 0 9px rgba(120,90,190,0.4));
+  animation: pill-deco-glow-pulse 3.4s ease-in-out infinite 0.6s;
+}
+.deco-flower-b path{ fill:#e8f0ff; }
+
+/* butterfly — top right, middle area, floats gently */
+.deco-butterfly{
+  top:32%;
+  right:26px;
+  width:26px;
+  height:26px;
+  filter:
+    drop-shadow(0 0 2px rgba(255,255,255,0.85))
+    drop-shadow(0 0 6px rgba(110,190,235,0.75))
+    drop-shadow(0 0 11px rgba(90,150,225,0.4));
+  animation: pill-butterfly-float 4.2s ease-in-out infinite;
+}
+.deco-butterfly path{ fill:#7ecbe8; }
+
+@keyframes pill-deco-glow-pulse{
+  0%, 100% { opacity:0.7; }
+  50%      { opacity:1; }
+}
+@keyframes pill-butterfly-float{
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50%      { transform: translateY(-4px) rotate(4deg); }
+}
+
+/* DAY — decoration colors shift to golden-white */
+body.is-day .deco-flower-a path{ stroke:#fff6df; }
+body.is-day .deco-flower-b path{ fill:#fff6df; }
+body.is-day .deco-butterfly path{ fill:#ffe9b8; }
+body.is-day .deco-flower-a,
+body.is-day .deco-flower-b{
+  filter:
+    drop-shadow(0 0 2px rgba(255,255,255,0.95))
+    drop-shadow(0 0 6px rgba(255,225,160,0.85))
+    drop-shadow(0 0 11px rgba(255,205,120,0.5));
+}
+body.is-day .deco-butterfly{
+  filter:
+    drop-shadow(0 0 2px rgba(255,255,255,0.9))
+    drop-shadow(0 0 6px rgba(255,220,150,0.8))
+    drop-shadow(0 0 12px rgba(255,200,110,0.45));
 }
 
 /* ---------- STAR BUTTONS & TINY-STARS (updated) ---------- */
@@ -680,13 +847,13 @@ body.is-day .star-btn::after{
     transform: translateX(10%);
   }
 
-  /* smaller glass pill for mobile/tablet */
+/* smaller glass pill for mobile/tablet */
   .glass-pill{
     min-width:260px;
     max-width:125vw;
     font-size:43px;
-    padding:10px 18px;
-  }
+    padding:14px 58px 14px 20px;
+}
 
   .panels{
     margin-top:260px;
