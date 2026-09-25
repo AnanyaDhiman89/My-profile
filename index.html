@@ -1194,7 +1194,7 @@ scale(1);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.6s ease;
+  transition: opacity 2s ease;
 }
 #wolf-loader.hidden {
   opacity: 0;
@@ -1776,7 +1776,7 @@ function typeLetter(){
         },800);
     }
 }
-window.onload=typeLetter;
+window.addEventListener("site-ready",typeLetter);
 
 /* ---------- Floating Sparkles ---------- */
 const pCanvas=document.getElementById("particles");
@@ -2603,7 +2603,7 @@ sun.addEventListener("pointerdown", clickCelestial);
         drawFrame(BREATHE_START);
         loader.classList.add('hidden');
         window.dispatchEvent(new CustomEvent('site-ready'));
-        setTimeout(() => loader.remove(), 700);
+        setTimeout(() => loader.remove(), 2200);
       }
     }
   }
