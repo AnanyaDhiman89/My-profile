@@ -1186,10 +1186,38 @@ scale(1);
 }
 }
 
+#wolf-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #313842;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s ease;
+}
+#wolf-loader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+#wolf-sprite {
+  width: min(85vw, 720px);
+  aspect-ratio: 4 / 3;
+  background-image: url('wolf(1)original-15c9b28b34f1d38ad84e1d520cb075b01-ezgif.com-gif-to-sprite-converter (1).png');
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
 </style>
 </head>
 
 <body>
+
+<div id="wolf-loader">
+  <div id="wolf-sprite"></div>
+</div>
 
 <!-- Hidden defs: reusable gradients for the butterfly/flower decorations.
      Referenced by id from CSS (fill/stroke: url(#...)) so the actual colors
@@ -2539,6 +2567,50 @@ sun.style.touchAction = "manipulation";
 
 moon.addEventListener("pointerdown", clickCelestial);
 sun.addEventListener("pointerdown", clickCelestial);
+</script>
+
+<script>
+(function () {
+  const loader = document.getElementById('wolf-loader');
+  const sprite = document.getElementById('wolf-sprite');
+
+  const COLS = 8, FRAME_W = 400, FRAME_H = 300, SHEET_W = 3200, SHEET_H = 2400;
+  const BREATHE_START = 1, BREATHE_END = 33, HOWL_END = 63, FPS = 12;
+
+  let frame = BREATHE_START;
+  let phase = 'breathe';
+  let assetsReady = false;
+
+  function drawFrame(n) {
+    const s = sprite.clientWidth / FRAME_W;
+    sprite.style.backgroundSize = (SHEET_W * s) + 'px ' + (SHEET_H * s) + 'px';
+    const idx = n - 1;
+    const col = idx % COLS;
+    const row = Math.floor(idx / COLS);
+    sprite.style.backgroundPosition = '-' + (col * FRAME_W * s) + 'px -' + (row * FRAME_H * s) + 'px';
+  }
+
+  function tick() {
+    drawFrame(frame);
+    if (phase === 'breathe') {
+      if (frame < BREATHE_END) frame++;
+      else if (assetsReady) { phase = 'howl'; frame = BREATHE_END + 1; }
+      else frame = BREATHE_START;
+    } else if (phase === 'howl') {
+      if (frame < HOWL_END) frame++;
+      else {
+        phase = 'done';
+        drawFrame(BREATHE_START);
+        loader.classList.add('hidden');
+        window.dispatchEvent(new CustomEvent('site-ready'));
+        setTimeout(() => loader.remove(), 700);
+      }
+    }
+  }
+
+  window.addEventListener('load', () => { assetsReady = true; });
+  setInterval(tick, 1000 / FPS);
+})();
 </script>
 
 </body>
